@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  @apply bg-ink-50 text-ink-900 antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-ink-100 bg-white shadow-sm;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-ink-900 text-white hover:bg-ink-800;
+  }
+  .btn-ghost {
+    @apply btn border border-ink-200 bg-white text-ink-800 hover:bg-ink-50;
+  }
+  .btn-mint {
+    @apply btn bg-mint-500 text-white hover:bg-mint-600;
+  }
+  .btn-amber {
+    @apply btn bg-amber-400 text-ink-900 hover:bg-amber-500;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-xs font-medium text-ink-700;
+  }
+  .input {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-ink-500 focus:ring-2 focus:ring-ink-900/5;
+  }
+  .textarea {
+    @apply input min-h-[120px] resize-y;
+  }
+}
+
+/* ---------- Urdu / RTL helpers ---------- */
+
+.rtl-text {
+  direction: rtl;
+  text-align: right;
+  font-family: var(--font-urdu), var(--font-inter), sans-serif;
+  line-height: 1.9;
+}
+
+/* ---------- Voice & avatar animations ---------- */
+
+@keyframes emai-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.avatar-pulse::before,
+.avatar-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid #2fb88c;
+  animation: emai-pulse-ring 1.6s ease-out infinite;
+}
+
+.avatar-pulse::after {
+  animation-delay: 0.8s;
+}
+
+@keyframes emai-bar {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.voice-bar {
+  transform-origin: center;
+  animation: emai-bar 1s ease-in-out infinite;
+}
+
+@keyframes emai-bounce-dot {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.thinking-dot {
+  animation: emai-bounce-dot 1.2s ease-in-out infinite;
+}
+
+.thinking-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.thinking-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes emai-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: emai-fade-in 0.25s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-pulse::before,
+  .avatar-pulse::after,
+  .voice-bar,
+  .thinking-dot,
+  .fade-in,
+  [class*="animate-avatar-"],
+  [class*="animate-sound-wave"] {
+    animation: none !important;
+  }
+}

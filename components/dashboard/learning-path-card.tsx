@@ -1,0 +1,157 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import clsx from "clsx";
+
+interface SubjectOverview {
+  key: string;
+  topics: number;
+  avgMastery: number;
+  weakestTopic: string | null;
+}
+
+interface PathData {
+  currentLevel: string;
+  currentTopic: string;
+  weakPrerequisite: string | null;
+  practice: string;
+  nextTopic: string;
+  challenge: string;
+  rationale: string;
+}
+
+export function LearningPathCard() {
+  const [subjects, setSubjects] = useState<SubjectOverview[]>([]);
+  const [selected, setSelected] = useState<string>("");
+  const [path, setPath] = useState<PathData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/learning-path")
+      .then((r) => (r.ok ? r.json() : { subjects: [] }))
+      .then((data) => {
+        setSubjects(data.subjects ?? []);
+        if (data.subjects?.length > 0) setSelected(data.subjects[0].key);
+      })
+      .catch(() => {})
+      .finally(() => setLoaded(true));
+  }, []);
+
+  async function buildPath() {
+    setLoading(true);
+    setError(null);
+    setPath(null);
+    try {
+      const res = await fetch("/api/learning-path", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: selected || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message ?? "Could not build the path. Try again.");
+        return;
+      }
+      setPath(data.path);
+    } catch {
+      setError("Could not build the path. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="card p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold text-ink-900">My Learning Path</h3>
+          <p className="mt-0.5 text-xs text-ink-500">
+            Built from your real scores — foundations first, never skipping weak prerequisites.
+          </p>
+        </div>
+        {subjects.length > 0 && (
+          <select
+            className="input max-w-[180px] py-1.5 text-xs"
+            value={selected}
+            onChange={(e) => {
+              setSelected(e.target.value);
+              setPath(null);
+            }}
+          >
+            {subjects.map((s) => (
+              <option key={s.key} value={s.key}>
+                {s.key} · {s.avgMastery}%
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+
+      {loaded && subjects.length === 0 && (
+        <p className="mt-4 text-sm text-ink-500">
+          Complete a session, challenge, viva or exam to unlock your learning path.
+        </p>
+      )}
+
+      {subjects.length > 0 && !path && (
+        <button onClick={buildPath} disabled={loading} className="btn-primary mt-4">
+          {loading ? "Building your path…" : "Build my learning path"}
+        </button>
+      )}
+
+      {error && <p className="mt-3 text-xs text-coral-500">{error}</p>}
+
+      {path && (
+        <div className="mt-4 space-y-4">
+          <div>
+            <span className="chip bg-mint-500/15 text-mint-700">{path.currentLevel}</span>
+            <h4 className="mt-2 text-sm font-semibold text-ink-900">
+              Working on now: {path.currentTopic}
+            </h4>
+            {path.weakPrerequisite && (
+              <p className="mt-1 rounded-lg border border-amber-400/40 bg-amber-400/10 p-2.5 text-xs text-amber-700">
+                Fix this first: {path.weakPrerequisite} — your foundation needs repair before
+                advancing.
+              </p>
+            )}
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl border border-ink-100 p-3">
+              <h5 className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+                Practice today
+              </h5>
+              <p className="mt-1 text-xs leading-relaxed text-ink-700">{path.practice}</p>
+            </div>
+            <div className="rounded-xl border border-ink-100 p-3">
+              <h5 className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+                Then
+              </h5>
+              <p className="mt-1 text-xs leading-relaxed text-ink-700">{path.nextTopic}</p>
+            </div>
+            <div className="rounded-xl border border-ink-100 p-3">
+              <h5 className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+                Stretch challenge
+              </h5>
+              <p className="mt-1 text-xs leading-relaxed text-ink-700">{path.challenge}</p>
+            </div>
+          </div>
+
+          <p className="text-xs leading-relaxed text-ink-500">
+            <strong className="text-ink-700">Why this order:</strong> {path.rationale}
+          </p>
+
+          <button
+            onClick={buildPath}
+            disabled={loading}
+            className={clsx("btn-ghost text-xs", loading && "opacity-50")}
+          >
+            {loading ? "Rebuilding…" : "Rebuild path"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Educational Mentor AI — Independent Mode</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --ink-50: #f6f7f9;
+    --ink-100: #eceef2;
+    --ink-200: #d5dae2;
+    --ink-300: #aab4c3;
+    --ink-500: #5a6779;
+    --ink-700: #363f4c;
+    --ink-800: #252c36;
+    --ink-900: #141820;
+    --mint-400: #4fd1a8;
+    --mint-500: #2fb88c;
+    --mint-600: #219a73;
+    --amber-400: #f5b642;
+    --amber-500: #e79a1c;
+    --coral-400: #ff8a7a;
+    --coral-500: #f06653;
+    --shadow: 0 1px 2px rgba(20, 24, 32, 0.04), 0 4px 16px rgba(20, 24, 32, 0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink-900);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  #app { min-height: 100vh; display: flex; flex-direction: column; }
+  header.top {
+    background: #fff;
+    border-bottom: 1px solid var(--ink-100);
+    padding: 16px 24px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  header.top .wrap {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  header.top h1 { font-size: 17px; font-weight: 600; margin: 0; }
+  header.top .sub { font-size: 12px; color: var(--ink-500); margin-top: 2px; }
+  main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 24px; }
+  footer {
+    border-top: 1px solid var(--ink-100);
+    padding: 16px 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-500);
+  }
+  .card {
+    background: #fff;
+    border: 1px solid var(--ink-100);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer;
+    transition: transform .08s ease, background .15s ease, opacity .15s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: var(--ink-900); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--ink-800); }
+  .btn-ghost { background: #fff; color: var(--ink-800); border: 1px solid var(--ink-200); }
+  .btn-ghost:hover:not(:disabled) { background: var(--ink-50); }
+  .btn-mint { background: var(--mint-500); color: #fff; }
+  .btn-mint:hover:not(:disabled) { background: var(--mint-600); }
+  .btn-amber { background: var(--amber-400); color: var(--ink-900); }
+  .btn-amber:hover:not(:disabled) { background: var(--amber-500); }
+  .btn-coral { background: var(--coral-500); color: #fff; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 500;
+    background: #fff; border: 1px solid var(--ink-200); color: var(--ink-700);
+  }
+  .chip-mint { background: rgba(47, 184, 140, 0.1); color: var(--mint-600); border-color: rgba(47, 184, 140, 0.3); }
+  .chip-amber { background: rgba(245, 182, 66, 0.15); color: #a96a00; border-color: rgba(245, 182, 66, 0.3); }
+  .chip-coral { background: rgba(240, 102, 83, 0.1); color: var(--coral-500); border-color: rgba(240, 102, 83, 0.3); }
+  .chip-easy { background: rgba(47, 184, 140, 0.1); color: var(--mint-600); border-color: rgba(47, 184, 140, 0.3); }
+  .chip-medium { background: rgba(245, 182, 66, 0.15); color: #a96a00; border-color: rgba(245, 182, 66, 0.3); }
+  .chip-hard { background: rgba(240, 102, 83, 0.1); color: var(--coral-500); border-color: rgba(240, 102, 83, 0.3); }
+  input, textarea, select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--ink-200);
+    border-radius: 12px;
+    background: #fff;
+    font: inherit;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--ink-500); }
+  textarea { resize: vertical; min-height: 100px; font-family: inherit; }
+  label { font-size: 12px; font-weight: 500; color: var(--ink-500); display: block; margin-bottom: 6px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-5 { grid-template-columns: repeat(5, 1fr); }
+  @media (max-width: 780px) {
+    .grid-2, .grid-3, .grid-5 { grid-template-columns: 1fr; }
+    .session-grid { grid-template-columns: 1fr !important; }
+  }
+  .muted { color: var(--ink-500); font-size: 13px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; }
+  .mt-4 { margin-top: 16px; } .mt-5 { margin-top: 24px; } .mt-6 { margin-top: 32px; }
+  .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; } .mb-4 { margin-bottom: 16px; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .flex-gap { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  h2 { font-size: 18px; margin: 0 0 4px; font-weight: 600; }
+  h3 { font-size: 15px; margin: 0 0 4px; font-weight: 600; }
+  .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--ink-500); font-weight: 500; }
+
+  /* Ring */
+  .ring-wrap { display: flex; flex-direction: column; align-items: center; }
+  .ring-wrap .label { margin-top: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--ink-500); font-weight: 500; }
+  .ring-wrap .sub { margin-top: 4px; font-size: 12px; color: var(--ink-500); text-align: center; max-width: 220px; }
+
+  /* Session layout */
+  .session-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
+  .feedback { padding: 18px; border-radius: 16px; }
+  .feedback.correct { background: rgba(47, 184, 140, 0.1); border-left: 4px solid var(--mint-500); }
+  .feedback.wrong { background: rgba(240, 102, 83, 0.08); border-left: 4px solid var(--coral-500); }
+  .hint-item {
+    padding: 12px; border-radius: 12px;
+    background: rgba(245, 182, 66, 0.08);
+    border: 1px solid rgba(245, 182, 66, 0.3);
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  .attempt-item {
+    padding: 12px 14px; border-radius: 12px;
+    background: var(--ink-50); border: 1px solid var(--ink-100);
+    margin-top: 8px;
+  }
+  .attempt-item.correct { background: rgba(47, 184, 140, 0.08); border-color: rgba(47, 184, 140, 0.3); }
+  .attempt-item.wrong { background: rgba(240, 102, 83, 0.06); border-color: rgba(240, 102, 83, 0.3); }
+  .attempt-item .answer { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; word-break: break-word; }
+  .problem-card { transition: transform .1s, box-shadow .15s; cursor: pointer; }
+  .problem-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(20,24,32,0.08); }
+  .mode-toggle { display: inline-flex; background: #fff; border: 1px solid var(--ink-200); border-radius: 12px; padding: 4px; }
+  .mode-toggle button {
+    padding: 6px 12px; border: none; background: transparent; cursor: pointer;
+    font-size: 12px; font-weight: 500; border-radius: 8px; color: var(--ink-700);
+  }
+  .mode-toggle button.active { background: var(--ink-900); color: #fff; }
+  .toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none;
+  }
+  .toggle input { display: none; }
+  .toggle .track {
+    width: 36px; height: 20px; background: var(--ink-200);
+    border-radius: 999px; position: relative; transition: background .15s;
+  }
+  .toggle .track::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%; background: #fff;
+    transition: transform .15s;
+  }
+  .toggle input:checked + .track { background: var(--mint-500); }
+  .toggle input:checked + .track::after { transform: translateX(16px); }
+  .empty {
+    padding: 40px 24px; text-align: center; color: var(--ink-500);
+    border: 2px dashed var(--ink-200); border-radius: 16px;
+  }
+  .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+  .badge-ok { background: rgba(47,184,140,0.2); color: var(--mint-600); }
+  .badge-no { background: rgba(240,102,83,0.15); color: var(--coral-500); }
+  .badge-reason { background: rgba(90, 103, 121, 0.12); color: var(--ink-700); }
+  kbd {
+    font-family: ui-monospace, monospace; font-size: 11px;
+    background: rgba(255,255,255,0.15); padding: 1px 6px; border-radius: 4px;
+  }
+  .progress { height: 6px; background: var(--ink-100); border-radius: 3px; overflow: hidden; }
+  .progress > span { display: block; height: 100%; background: var(--mint-500); transition: width .3s; }
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--ink-900); color: #fff;
+    padding: 12px 18px; border-radius: 12px;
+    font-size: 13px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: slide-in .25s ease-out;
+    z-index: 100;
+  }
+  @keyframes slide-in { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="wrap">
+      <div>
+        <h1><a href="#" style="color:inherit;text-decoration:none">Educational Mentor AI</a></h1>
+        <div class="sub">Independent Mode — learn to solve problems on your own</div>
+      </div>
+      <div class="flex-gap">
+        <a href="#" class="btn btn-ghost">Problems</a>
+        <a href="#dashboard" class="btn btn-ghost">Dashboard</a>
+        <span id="student-badge" class="chip"></span>
+      </div>
+    </div>
+  </header>
+  <main id="view"></main>
+  <footer>
+    AI success ≠ more AI usage · AI success = student needs less AI
+  </footer>
+</div>
+
+<script>
+/* =========================================================================
+ * DATA — problems, student, sessions, attempts, hints, achievements
+ * Persisted in localStorage under ema_* keys.
+ * ========================================================================= */
+const PROBLEMS = [
+  { id:"p-math-1", subject:"MATH", topic:"Algebra", difficulty:"EASY",
+    title:"Solve the linear equation",
+    content:"Solve for x:\n\n    2x + 5 = 17\n\nWrite your answer as a single number. Show each algebraic step briefly.",
+    solution:"6" },
+  { id:"p-math-2", subject:"MATH", topic:"Algebra", difficulty:"MEDIUM",
+    title:"Quadratic roots",
+    content:"Find all real solutions of:\n\n    x² − 7x + 12 = 0\n\nList the solutions separated by a comma.",
+    solution:"3, 4" },
+  { id:"p-math-3", subject:"MATH", topic:"Percentages", difficulty:"EASY",
+    title:"Discount calculation",
+    content:"A jacket costs $80 and is discounted by 25%. What is the final price in dollars?\n\nWrite only the final number.",
+    solution:"60" },
+  { id:"p-math-4", subject:"MATH", topic:"Geometry", difficulty:"HARD",
+    title:"Circumscribed circle area",
+    content:"A square has side length 10 cm. A circle is circumscribed around the square (passing through all four vertices).\n\nWhat is the area of the circle? Give your answer in terms of π (e.g. \"25π\").",
+    solution:"50π" },
+  { id:"p-phys-1", subject:"PHYSICS", topic:"Kinematics", difficulty:"EASY",
+    title:"Velocity from distance and time",
+    content:"A car travels 120 meters in 6 seconds at a constant speed. What is its velocity in m/s?\n\nGive only the number.",
+    solution:"20" },
+  { id:"p-phys-2", subject:"PHYSICS", topic:"Newton's Laws", difficulty:"MEDIUM",
+    title:"Force on an accelerating mass",
+    content:"A 4 kg object accelerates at 3 m/s². What net force acts on it, in Newtons?\n\nGive only the number.",
+    solution:"12" },
+  { id:"p-phys-3", subject:"PHYSICS", topic:"Energy", difficulty:"HARD",
+    title:"Kinetic energy of a moving object",
+    content:"A 2 kg ball moves at 5 m/s. What is its kinetic energy in joules?\n\nUse KE = ½mv². Give only the number.",
+    solution:"25" },
+  { id:"p-prog-1", subject:"PROGRAMMING", topic:"Loops", difficulty:"EASY",
+    title:"Trace the C++ loop",
+    content:"What is the final value of `sum` after this code runs?\n\n    int sum = 0;\n    for (int i = 1; i <= 4; i++) {\n        sum += i;\n    }\n\nGive only the number.",
+    solution:"10" },
+  { id:"p-prog-2", subject:"PROGRAMMING", topic:"Recursion", difficulty:"MEDIUM",
+    title:"Trace a recursive function",
+    content:"What does this function return when called as f(5)?\n\n    int f(int n) {\n        if (n <= 1) return 1;\n        return n * f(n - 1);\n    }\n\nGive only the number.",
+    solution:"120" },
+  { id:"p-prog-3", subject:"PROGRAMMING", topic:"Pointers", difficulty:"HARD",
+    title:"Pointer swap in C++",
+    content:"What values are printed?\n\n    int a = 5, b = 10;\n    int *p = &a, *q = &b;\n    int t = *p;\n    *p = *q;\n    *q = t;\n    cout << a << \" \" << b;\n\nWrite the two numbers separated by a space.",
+    solution:"10 5" },
+  { id:"p-chem-1", subject:"CHEMISTRY", topic:"Stoichiometry", difficulty:"MEDIUM",
+    title:"Moles from mass",
+    content:"How many moles of water (H₂O) are in 36 grams of water?\n\nMolar mass of H₂O = 18 g/mol. Give only the number.",
+    solution:"2" },
+  { id:"p-cs-1", subject:"CS", topic:"Algorithms", difficulty:"MEDIUM",
+    title:"Big-O of linear search",
+    content:"In the worst case, what is the time complexity of linear search through an unsorted array of n elements?\n\nWrite your answer in the form \"O(...)\".",
+    solution:"O(n)" },
+  { id:"p-bio-1", subject:"BIOLOGY", topic:"Cell Biology", difficulty:"EASY",
+    title:"Powerhouse of the cell",
+    content:"Which organelle is responsible for producing most of the cell's ATP through aerobic respiration?\n\nWrite the single-word name.",
+    solution:"mitochondria" }
+];
+
+const ACHIEVEMENTS = [
+  { key:"first_independent", icon:"🧠", title:"First Independent Solution",
+    desc:"Solved your first problem without full assistance." },
+  { key:"streak_5", icon:"🔥", title:"Independent Streak",
+    desc:"Solved 5 problems independently in a row." },
+  { key:"hint_saver", icon:"💡", title:"Hint Saver",
+    desc:"Solved 10 problems using fewer than 2 hints each." },
+  { key:"thinker", icon:"🚀", title:"Thinker",
+    desc:"Solved 20 problems without requiring the full solution." },
+  { key:"self_learner", icon:"🏆", title:"Self Learner",
+    desc:"Maintained 80%+ independent success for 7 days." },
+  { key:"sharp_shooter", icon:"🎯", title:"Sharp Shooter",
+    desc:"Got 5 first-attempt correct answers." },
+  { key:"ai_free_master", icon:"🛡️", title:"AI-Free Master",
+    desc:"Solved 5 AI-Free challenges." }
+];
+
+const STORE = {
+  student: null,
+  sessions: [], // { id, problemId, mode, isAiFree, status, currentHintLevel, startedAt, finishedAt, attempts:[], hints:[], confidenceChecks:[], reflections:[] }
+};
+
+function uid(p="id") { return p + "_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); }
+
+function loadStore() {
+  try {
+    const raw = localStorage.getItem("ema_store");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      STORE.student = parsed.student || null;
+      STORE.sessions = parsed.sessions || [];
+    }
+  } catch (e) { console.warn("Store load failed:", e); }
+  if (!STORE.student) {
+    STORE.student = { id: uid("s"), name: "Demo Student", mode: "INDEPENDENT" };
+    saveStore();
+  }
+}
+function saveStore() {
+  localStorage.setItem("ema_store", JSON.stringify({ student: STORE.student, sessions: STORE.sessions }));
+}
+function getSession(id) { return STORE.sessions.find(s => s.id === id); }
+function getProblem(id) { return PROBLEMS.find(p => p.id === id); }
+
+/* =========================================================================
+ * INDEPENDENT ENGINE — core learning loop (ported from TypeScript version)
+ * ========================================================================= */
+const MAX_RETRIES_BEFORE_REVEAL = 4;
+
+function extractNumber(s) {
+  const m = s.match(/^-?\d+(?:\.\d+)?/);
+  if (!m) return null;
+  const n = parseFloat(m[0]);
+  return Number.isFinite(n) ? n : null;
+}
+function escapeRx(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+function checkAnswer(student, problem) {
+  const s = student.trim();
+  const c = problem.solution.trim();
+  if (!s) return false;
+  if (c.toLowerCase() === s.toLowerCase()) return true;
+  const cn = extractNumber(c), sn = extractNumber(s);
+  if (cn !== null && sn !== null) {
+    const tol = Math.max(0.01, Math.abs(cn) * 0.02);
+    if (Math.abs(cn - sn) <= tol) return true;
+  }
+  if (c.length <= 30) {
+    const rx = new RegExp(`\\b${escapeRx(c)}\\b`, "i");
+    if (rx.test(s)) return true;
+  }
+  return false;
+}
+
+function evaluateReasoning(answer, isCorrect) {
+  const a = answer.trim();
+  const words = a.split(/\s+/).filter(Boolean).length;
+  const showsWork = /=|step|because|therefore|since|so|thus|implies|substituting/i.test(a);
+  if (words < 5 && !showsWork) return isCorrect ? "WEAK" : "INCORRECT";
+  if (showsWork && words >= 15) return isCorrect ? "STRONG" : "WEAK";
+  if (showsWork) return "ADEQUATE";
+  return isCorrect ? "ADEQUATE" : "WEAK";
+}
+
+function classifyMistake(answer) {
+  const a = answer.toLowerCase();
+  if (/\b(unit|units|cm|m\/s|kg)\b/.test(a) && a.length < 40) return "CARELESS_MISTAKE";
+  if (/\b(formula|equation|wrong formula)\b/.test(a)) return "WRONG_FORMULA";
+  if (/\b(guess|no idea|idk|don'?t know)\b/.test(a)) return "CONCEPT_GAP";
+  if (/\b(method|approach|wrong way)\b/.test(a)) return "WRONG_METHOD";
+  if (/\b(misread|misunderstood|thought it was)\b/.test(a)) return "QUESTION_MISUNDERSTANDING";
+  if (/\b(if|then|because|therefore|so)\b/.test(a) && a.length > 80) return "LOGICAL_ERROR";
+  if (/[=+\-*/]/.test(a) && /\d/.test(a)) return "CALCULATION_ERROR";
+  return a.length < 25 ? "INCOMPLETE_REASONING" : "CONCEPT_GAP";
+}
+
+function buildFeedback(problem, isCorrect, reasoning, mistakeType) {
+  const topic = problem.topic || "this topic";
+  if (isCorrect) {
+    if (reasoning === "STRONG")
+      return `Correct — and your reasoning is solid. You clearly understand ${topic}. Ready for a harder one?`;
+    if (reasoning === "ADEQUATE")
+      return `Correct. Your reasoning mostly holds; tightening the explanation of the key step would make it airtight.`;
+    if (reasoning === "WEAK")
+      return `The answer is right, but you didn't show much work. Can you explain the main step so I know it wasn't a guess?`;
+    return `Correct on the surface — let's check the reasoning.`;
+  }
+  const label = mistakeType.toLowerCase().replace(/_/g, " ");
+  return `Good attempt — not quite there. I'm flagging this as a ${label}. Re-read the problem, think about ${topic}, and try again. If you want a hint, tap "Ask for a hint".`;
+}
+
+function analyzeAttempt(session, problem, newAnswer) {
+  const attempts = session.attempts;
+  const attemptNumber = attempts.length + 1;
+  const isCorrect = checkAnswer(newAnswer, problem);
+  const reasoning = evaluateReasoning(newAnswer, isCorrect);
+  const mistakeType = isCorrect ? "NONE" : classifyMistake(newAnswer);
+  const strongAnswer = isCorrect && reasoning !== "INCORRECT";
+
+  let feedback, nextAction, nextHintLevel = session.currentHintLevel;
+
+  if (strongAnswer) {
+    feedback = buildFeedback(problem, true, reasoning);
+    nextAction = (attemptNumber === 1 && session.mode === "INDEPENDENT") ? "escalate_difficulty" : "accept";
+  } else if (isCorrect && reasoning === "INCORRECT") {
+    feedback = "Your final answer is correct, but the reasoning looks shaky — this might be a lucky guess. Before we move on, can you explain the key step that got you here?";
+    nextAction = "retry";
+    nextHintLevel = Math.max(nextHintLevel, 1);
+  } else {
+    const attemptsLeft = MAX_RETRIES_BEFORE_REVEAL - attemptNumber;
+    if (attemptsLeft <= 0 && session.currentHintLevel >= 5) {
+      feedback = "You've given this a solid effort. Let's walk through the complete solution together so the concept clicks for next time.";
+      nextAction = "reveal";
+      nextHintLevel = 6;
+    } else {
+      feedback = buildFeedback(problem, false, reasoning, mistakeType);
+      nextAction = "retry";
+      nextHintLevel = Math.min(5, Math.max(session.currentHintLevel + 1, 1));
+    }
+  }
+
+  const reasoningScore = reasoning === "STRONG" ? 90 : reasoning === "ADEQUATE" ? 70 : reasoning === "WEAK" ? 45 : 25;
+  return { isCorrect, reasoning, mistakeType, feedback, nextAction, nextHintLevel, reasoningScore };
+}
+
+function generateHint(problem, level) {
+  const topic = problem.topic || "this topic";
+  const title = problem.title || "this problem";
+  const clamped = Math.max(1, Math.min(6, level));
+  switch (clamped) {
+    case 1:
+      return { level: 1, kind: "question",
+        content: `Before we go further — what's your first instinct about ${title}? Which part of ${topic} feels most relevant here?` };
+    case 2:
+      return { level: 2, kind: "concept",
+        content: `Concept reminder: the core idea at play is ${topic}. Re-read the problem statement and underline the piece that connects to ${topic}.` };
+    case 3:
+      return { level: 3, kind: "method",
+        content: `Method hint: a reliable approach is to (1) identify the knowns, (2) write down the relationship from ${topic} that ties them together, and (3) solve for the unknown. Which relationship fits?` };
+    case 4:
+      return { level: 4, kind: "step-guide",
+        content: `Let's walk through it step by step.\nStep 1 — Write down what you know.\nStep 2 — Identify the formula or rule for ${topic}.\nStep 3 — Substitute and simplify.\nStep 4 — Check units / edge cases.\nTry Step 1 now and tell me what you have.` };
+    case 5:
+      return { level: 5, kind: "partial-solution",
+        content: `Here's a partial scaffold:\n• The relevant relationship is based on ${topic}.\n• The final answer has the form "______ [units]".\nFill in the blank by plugging in the given numbers.` };
+    case 6:
+    default:
+      return { level: 6, kind: "full-solution",
+        content: `Full solution:\n${problem.solution}\n\nStudy each step carefully — the goal is to be able to reproduce this reasoning on a similar problem next time.` };
+  }
+}
+
+/* =========================================================================
+ * SCORING & ACHIEVEMENTS
+ * ========================================================================= */
+function computeMetrics() {
+  const completed = STORE.sessions.filter(s => s.status === "COMPLETED" || s.status === "REVEALED");
+  let totalProblems = completed.length;
+  let solvedWithoutFull = 0, firstAttemptCorrect = 0, totalAttempts = 0, totalHints = 0;
+  let aiFreeAttempts = 0, aiFreeSuccess = 0, retrySuccesses = 0, retryOpportunities = 0;
+
+  for (const s of completed) {
+    totalAttempts += s.attempts.length;
+    totalHints += s.hints.length;
+    const first = s.attempts[0];
+    if (first?.isCorrect) firstAttemptCorrect += 1;
+    const neededFull = s.status === "REVEALED" || s.currentHintLevel >= 6;
+    if (s.status === "COMPLETED" && !neededFull) solvedWithoutFull += 1;
+    if (s.isAiFree) {
+      aiFreeAttempts += 1;
+      if (s.status === "COMPLETED") aiFreeSuccess += 1;
+    }
+    if (first && !first.isCorrect) {
+      retryOpportunities += 1;
+      const laterCorrect = s.attempts.slice(1).some(a => a.isCorrect);
+      if (laterCorrect) retrySuccesses += 1;
+    }
+  }
+
+  const d = (n, m) => m === 0 ? 0 : n / m;
+  return {
+    totalProblems, solvedWithoutFull, totalAttempts, totalHints,
+    independentSuccessRate: d(solvedWithoutFull, totalProblems),
+    firstAttemptAccuracy: d(firstAttemptCorrect, totalProblems),
+    hintDependency: d(totalHints, totalProblems),
+    retrySuccessRate: d(retrySuccesses, retryOpportunities),
+    aiFreeSuccessRate: d(aiFreeSuccess, aiFreeAttempts),
+    aiFreeAttempts, aiFreeSuccess, retrySuccesses, retryOpportunities,
+    firstAttemptCorrect
+  };
+}
+
+function evaluateAchievements() {
+  const m = computeMetrics();
+  const completed = STORE.sessions.filter(s => s.status === "COMPLETED" || s.status === "REVEALED");
+  const earned = new Set();
+
+  if (m.solvedWithoutFull >= 1) earned.add("first_independent");
+
+  // streak of 5 consecutive independent solves (chronological)
+  const chrono = [...completed].sort((a, b) => new Date(a.finishedAt || 0) - new Date(b.finishedAt || 0));
+  let streak = 0, maxStreak = 0;
+  for (const s of chrono) {
+    const neededFull = s.status === "REVEALED" || s.currentHintLevel >= 6;
+    if (s.status === "COMPLETED" && !neededFull) { streak += 1; maxStreak = Math.max(maxStreak, streak); }
+    else streak = 0;
+  }
+  if (maxStreak >= 5) earned.add("streak_5");
+
+  if (m.totalHints < m.solvedWithoutFull * 2 && m.solvedWithoutFull >= 10) earned.add("hint_saver");
+  if (m.solvedWithoutFull >= 20) earned.add("thinker");
+  if (m.totalProblems >= 5 && (m.solvedWithoutFull / m.totalProblems) >= 0.8) earned.add("self_learner");
+  if (m.firstAttemptCorrect >= 5) earned.add("sharp_shooter");
+  if (m.aiFreeSuccess >= 5) earned.add("ai_free_master");
+
+  return [...earned];
+}
+
+/* =========================================================================
+ * UI HELPERS
+ * ========================================================================= */
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const k in attrs) {
+    if (k === "class") node.className = attrs[k];
+    else if (k === "html") node.innerHTML = attrs[k];
+    else if (k.startsWith("on") && typeof attrs[k] === "function") node.addEventListener(k.slice(2).toLowerCase(), attrs[k]);
+    else if (k === "style" && typeof attrs[k] === "object") Object.assign(node.style, attrs[k]);
+    else node.setAttribute(k, attrs[k]);
+  }
+  for (const c of children) {
+    if (c == null || c === false) continue;
+    if (typeof c === "string" || typeof c === "number") node.appendChild(document.createTextNode(c));
+    else if (c instanceof Node) node.appendChild(c);
+    else if (Array.isArray(c)) c.forEach(x => x instanceof Node && node.appendChild(x));
+  }
+  return node;
+}
+
+function toast(msg) {
+  const t = el("div", { class: "toast" }, msg);
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = "0"; t.style.transform = "translateY(10px)"; }, 2400);
+  setTimeout(() => t.remove(), 2800);
+}
+
+function difficultyChip(d) {
+  const cls = d === "EASY" ? "chip-easy" : d === "MEDIUM" ? "chip-medium" : "chip-hard";
+  return el("span", { class: `chip ${cls}` }, d);
+}
+
+/* SVG ring */
+function scoreRing(value, size = 180, color = "mint") {
+  const pct = Math.round(value * 100);
+  const stroke = 14;
+  const radius = (size - stroke) / 2;
+  const circ = 2 * Math.PI * radius;
+  const offset = circ * (1 - Math.max(0, Math.min(1, value)));
+  const colorHex = pct >= 75 ? "#2fb88c" : pct >= 50 ? "#e79a1c" : "#f06653";
+
+  const svg = `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)">
+    <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="#eceef2" stroke-width="${stroke}" />
+    <circle cx="${size/2}" cy="${size/2}" r="${radius}" fill="none" stroke="${colorHex}" stroke-width="${stroke}" stroke-linecap="round"
+            stroke-dasharray="${circ}" stroke-dashoffset="${offset}" style="transition:stroke-dashoffset .7s" />
+  </svg>`;
+  const wrap = el("div", { class: "ring-wrap" });
+  wrap.innerHTML = `<div style="position:relative;width:${size}px;height:${size}px">
+    ${svg}
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <span style="font-size:40px;font-weight:600">${pct}%</span>
+    </div>
+  </div>`;
+  return wrap;
+}
+
+/* =========================================================================
+ * VIEWS
+ * ========================================================================= */
+function renderStudentBadge() {
+  const b = document.getElementById("student-badge");
+  if (!b) return;
+  b.innerHTML = "";
+  b.appendChild(document.createTextNode(STORE.student.name));
+}
+
+/* ---------------- HOME VIEW ---------------- */
+function viewHome() {
+  const view = document.getElementById("view");
+  view.innerHTML = "";
+
+  const m = computeMetrics();
+  const state = { subject: "ALL", difficulty: "ALL", mode: STORE.student.mode, aiFree: false };
+
+  // Top — independence score summary
+  const hero = el("section", { class: "card mt-4", style: { display: "flex", gap: "24px", flexWrap: "wrap", alignItems: "center" } });
+  if (m.totalProblems === 0) {
+    hero.appendChild(el("div", { style: { flex: 1 } },
+      el("h2", {}, "Welcome."),
+      el("p", { class: "muted mt-2" }, "Pick a problem below to begin your first Independent Mode session. The AI will not give you the answer — it will help you find it yourself."),
+      el("p", { class: "muted mt-2" }, "Your progress is stored locally in your browser.")
+    ));
+  } else {
+    const ring = scoreRing(m.independentSuccessRate, 140);
+    ring.appendChild(el("div", { class: "label" }, "Independence Score"));
+    ring.appendChild(el("div", { class: "sub" }, `${m.solvedWithoutFull} / ${m.totalProblems} problems solved without full assistance`));
+    hero.appendChild(ring);
+    const stats = el("div", { style: { flex: 1, minWidth: "260px" }, class: "grid grid-5" });
+    const mk = (label, val, tone) => el("div", {},
+      el("div", { class: "eyebrow" }, label),
+      el("div", { class: "mt-1", style: { fontSize: "20px", fontWeight: 600, color: tone } }, val)
+    );
+    stats.appendChild(mk("First-attempt", `${Math.round(m.firstAttemptAccuracy*100)}%`, m.firstAttemptAccuracy >= 0.5 ? "#219a73" : "#a96a00"));
+    stats.appendChild(mk("Avg hints", m.hintDependency.toFixed(1), m.hintDependency <= 2 ? "#219a73" : "#a96a00"));
+    stats.appendChild(mk("Retry success", `${Math.round(m.retrySuccessRate*100)}%`, m.retrySuccessRate >= 0.6 ? "#219a73" : "#a96a00"));
+    stats.appendChild(mk("AI-Free", `${Math.round(m.aiFreeSuccessRate*100)}%`, m.aiFreeSuccessRate >= 0.5 ? "#219a73" : "#a96a00"));
+    stats.appendChild(mk("Total attempts", String(m.totalAttempts), "#141820"));
+    hero.appendChild(stats);
+  }
+  view.appendChild(hero);
+
+  // Filters
+  const filters = el("div", { class: "card mt-4" });
+  const subjects = ["ALL", ...new Set(PROBLEMS.map(p => p.subject))];
+  filters.appendChild(el("div", { class: "flex-between mb-3" },
+    el("h2", {}, "Choose a problem"),
+    el("label", { class: "toggle" },
+      el("span", {}, "AI-Free challenge"),
+      (() => { const i = el("input", { type: "checkbox" }); i.checked = state.aiFree;
+        i.addEventListener("change", () => { state.aiFree = i.checked; }); return i; })(),
+      el("span", { class: "track" })
+    )
+  ));
+
+  const modeToggle = el("div", { class: "mode-toggle" });
+  for (const md of ["INDEPENDENT", "GUIDED", "ADAPTIVE", "DEPENDENT"]) {
+    const b = el("button", { onclick: () => { state.mode = md; STORE.student.mode = md; saveStore();
+      [...modeToggle.children].forEach(x => x.classList.remove("active")); b.classList.add("active"); } }, md);
+    if (md === state.mode) b.classList.add("active");
+    modeToggle.appendChild(b);
+  }
+  const subjectSel = el("select", { style: { width: "auto" } });
+  for (const s of subjects) subjectSel.appendChild(el("option", { value: s }, s === "ALL" ? "All subjects" : s));
+  subjectSel.addEventListener("change", () => { state.subject = subjectSel.value; render(); });
+  const diffSel = el("select", { style: { width: "auto" } });
+  for (const d of ["ALL", "EASY", "MEDIUM", "HARD"]) diffSel.appendChild(el("option", { value: d }, d === "ALL" ? "All difficulties" : d));
+  diffSel.addEventListener("change", () => { state.difficulty = diffSel.value; render(); });
+
+  const row = el("div", { class: "flex-gap" },
+    el("div", {}, el("label", {}, "Mode"), modeToggle),
+    el("div", {}, el("label", {}, "Subject"), subjectSel),
+    el("div", {}, el("label", {}, "Difficulty"), diffSel)
+  );
+  filters.appendChild(row);
+  view.appendChild(filters);
+
+  // Problem grid
+  const grid = el("div", { class: "grid grid-3 mt-4" });
+  function render() {
+    grid.innerHTML = "";
+    const list = PROBLEMS.filter(p =>
+      (state.subject === "ALL" || p.subject === state.subject) &&
+      (state.difficulty === "ALL" || p.difficulty === state.difficulty));
+    if (list.length === 0) {
+      grid.appendChild(el("div", { class: "empty", style: { gridColumn: "1 / -1" } }, "No problems match your filters."));
+      return;
+    }
+    for (const p of list) {
+      const card = el("div", { class: "card problem-card" },
+        el("div", { class: "flex-between" },
+          difficultyChip(p.difficulty),
+          el("span", { class: "chip" }, p.subject)
+        ),
+        el("h3", { class: "mt-3" }, p.title),
+        el("p", { class: "muted mt-1" }, p.topic),
+        el("p", { class: "muted mt-2", style: { fontSize: "13px" } },
+          p.content.length > 120 ? p.content.slice(0, 120) + "…" : p.content),
+        el("button", { class: "btn btn-primary mt-4", style: { width: "100%" },
+          onclick: () => startSession(p.id, state.mode, state.aiFree) },
+          state.aiFree ? "Start AI-Free challenge" : "Start session")
+      );
+      grid.appendChild(card);
+    }
+  }
+  view.appendChild(grid);
+  render();
+}
+
+/* ---------------- SESSION VIEW ---------------- */
+function startSession(problemId, mode, isAiFree) {
+  const s = {
+    id: uid("sess"),
+    problemId, mode, isAiFree,
+    status: "ACTIVE",
+    currentHintLevel: 0,
+    startedAt: new Date().toISOString(),
+    finishedAt: null,
+    attempts: [], hints: [], confidenceChecks: [], reflections: []
+  };
+  STORE.sessions.unshift(s);
+  saveStore();
+  location.hash = `session/${s.id}`;
+}
+
+function viewSession(id) {
+  const view = document.getElementById("view");
+  view.innerHTML = "";
+  const session = getSession(id);
+  if (!session) {
+    view.appendChild(el("div", { class: "empty mt-6" }, "Session not found."));
+    return;
+  }
+  const problem = getProblem(session.problemId);
+
+  // Header
+  const header = el("div", { class: "flex-between mb-4" },
+    el("div", {},
+      el("a", { href: "#", class: "muted", style: { textDecoration: "none", fontSize: "13px" } }, "← Back to problems"),
+      el("h2", { class: "mt-1" }, problem.title)
+    ),
+    el("div", { class: "flex-gap" },
+      el("span", { class: "chip" }, session.mode),
+      session.isAiFree ? el("span", { class: "chip chip-amber" }, "AI-Free") : null,
+      (() => {
+        const cls = session.status === "ACTIVE" ? "chip-mint" :
+                    session.status === "COMPLETED" ? "chip-mint" :
+                    session.status === "REVEALED" ? "chip-coral" : "";
+        return el("span", { class: `chip ${cls}` }, session.status);
+      })(),
+      session.status === "ACTIVE" ? el("button", { class: "btn btn-ghost", onclick: () => {
+        if (confirm("Abandon this session?")) { session.status = "ABANDONED"; saveStore(); location.hash = ""; }
+      } }, "Abandon") : null
+    )
+  );
+  view.appendChild(header);
+
+  // Layout
+  const grid = el("div", { class: "session-grid" });
+  const left = el("div");
+  const right = el("div", { style: { display: "flex", flexDirection: "column", gap: "16px" } });
+  grid.appendChild(left); grid.appendChild(right);
+  view.appendChild(grid);
+
+  // Problem card (left)
+  const probCard = el("div", { class: "card" },
+    el("div", { class: "flex-gap mb-3" },
+      el("span", { class: "chip" }, problem.subject),
+      el("span", { class: "chip" }, problem.topic),
+      difficultyChip(problem.difficulty)
+    ),
+    el("h2", {}, problem.title),
+    el("pre", { style: { whiteSpace: "pre-wrap", fontFamily: "inherit", margin: "12px 0 0", fontSize: "14px", lineHeight: 1.6 } }, problem.content)
+  );
+  left.appendChild(probCard);
+
+  // Solution reveal
+  const solutionBox = el("div", { class: "card mt-3", style: { display: "none", borderColor: "rgba(240,102,83,0.3)", background: "rgba(240,102,83,0.04)" } },
+    el("h3", { style: { color: "#f06653" } }, "Full Solution"),
+    el("pre", { style: { whiteSpace: "pre-wrap", fontFamily: "inherit", margin: "8px 0 0", fontSize: "14px" } }, problem.solution)
+  );
+  left.appendChild(solutionBox);
+
+  // Attempts history (left)
+  const histBox = el("div", { class: "card mt-3" }, el("h3", {}, "Attempt history"));
+  left.appendChild(histBox);
+
+  // Attempt input (right)
+  const inputCard = el("div", { class: "card" });
+  right.appendChild(inputCard);
+
+  // Feedback (right)
+  const feedbackBox = el("div");
+  right.appendChild(feedbackBox);
+
+  // Confidence prompt (right)
+  const confidenceBox = el("div");
+  right.appendChild(confidenceBox);
+
+  // Hint panel (right)
+  const hintCard = el("div", { class: "card" });
+  right.appendChild(hintCard);
+
+  // Reflection (right)
+  const reflectionBox = el("div");
+  right.appendChild(reflectionBox);
+
+  // Completion card (right)
+  const completeCard = el("div", { class: "card", style: { display: "none" } });
+  right.appendChild(completeCard);
+
+  // Re-render helper
+  function redraw() {
+    // Attempts list
+    histBox.innerHTML = "";
+    histBox.appendChild(el("h3", {}, `Attempt history (${session.attempts.length})`));
+    if (session.attempts.length === 0) {
+      histBox.appendChild(el("p", { class: "muted mt-2" }, "No attempts yet."));
+    } else {
+      for (const a of session.attempts) {
+        const item = el("div", { class: `attempt-item ${a.isCorrect ? "correct" : "wrong"}` },
+          el("div", { class: "flex-between" },
+            el("div", { class: "flex-gap" },
+              el("span", { class: "badge" }, `#${a.attemptNumber}`),
+              el("span", { class: `badge ${a.isCorrect ? "badge-ok" : "badge-no"}` }, a.isCorrect ? "Correct" : "Incorrect"),
+              el("span", { class: "badge badge-reason" }, `reasoning: ${a.reasoning.toLowerCase()}`)
+            ),
+            el("span", { class: "muted", style: { fontSize: "11px" } }, `${a.timeTakenSec || 0}s · hint lvl ${a.hintLevelUsed}`)
+          ),
+          el("div", { class: "answer mt-2" }, a.answer)
+        );
+        if (!a.isCorrect && a.mistakeType !== "NONE") {
+          item.appendChild(el("div", { class: "chip chip-coral mt-2" }, a.mistakeType.toLowerCase().replace(/_/g, " ")));
+        }
+        histBox.appendChild(item);
+      }
+    }
+
+    // Input card
+    const isComplete = session.status !== "ACTIVE";
+    inputCard.innerHTML = "";
+    if (!isComplete) {
+      const aiFreeLocked = session.isAiFree && session.attempts.length === 0;
+      inputCard.appendChild(el("h3", {}, "Your attempt"));
+      const ta = el("textarea", { placeholder: aiFreeLocked
+        ? "Solve this problem on your own. No hints allowed until you submit."
+        : "Show your reasoning, not just the final answer…", class: "mt-2" });
+      inputCard.appendChild(ta);
+      const row = el("div", { class: "flex-between mt-2" },
+        el("span", { class: "muted", style: { fontSize: "11px" } }, "Tip: Ctrl/Cmd + Enter to submit"),
+        el("button", { class: "btn btn-primary", onclick: () => submitAttempt(ta.value, ta) }, "Submit attempt")
+      );
+      inputCard.appendChild(row);
+    }
+
+    // Hint panel
+    hintCard.innerHTML = "";
+    const aiFreeLocked = session.isAiFree && session.attempts.length === 0;
+    const hintHeader = el("div", { class: "flex-between" },
+      el("h3", {}, `Progressive hints (${session.hints.length}/6)`),
+      el("button", { class: "btn btn-amber",
+        disabled: isComplete || aiFreeLocked || session.currentHintLevel >= 6,
+        onclick: () => requestHint() },
+        aiFreeLocked ? "Locked" : session.currentHintLevel >= 6 ? "Max reached" : "Ask for a hint")
+    );
+    hintCard.appendChild(hintHeader);
+    if (aiFreeLocked) {
+      hintCard.appendChild(el("p", { class: "chip chip-amber mt-2", style: { display: "inline-block" } },
+        "Hints are locked in AI-Free mode until you submit your first attempt."));
+    }
+    for (const h of session.hints) {
+      hintCard.appendChild(el("div", { class: "hint-item" },
+        el("div", { class: "flex-between mb-2" },
+          el("span", { style: { fontWeight: 600, fontSize: "12px" } }, `Level ${h.level}`),
+          el("span", { class: "muted", style: { fontSize: "11px" } }, h.kind)
+        ),
+        el("div", { style: { whiteSpace: "pre-wrap", fontSize: "13px" } }, h.content)
+      ));
+    }
+
+    // Solution reveal
+    if (session.status === "REVEALED" || session.hints.some(h => h.level === 6)) {
+      solutionBox.style.display = "block";
+    } else {
+      solutionBox.style.display = "none";
+    }
+
+    // Completion
+    if (isComplete) {
+      completeCard.style.display = "block";
+      completeCard.innerHTML = "";
+      completeCard.appendChild(el("h3", { style: { textAlign: "center" } }, "Session complete"));
+      completeCard.appendChild(el("p", { class: "muted mt-2", style: { textAlign: "center" } },
+        session.status === "COMPLETED" ? "Great work — you solved it." :
+        session.status === "REVEALED" ? "The full solution was revealed. Study it, then try a similar problem." :
+        "This session was abandoned."));
+      const row = el("div", { class: "row mt-3" },
+        el("a", { href: "#dashboard", class: "btn btn-ghost", style: { flex: 1 } }, "View dashboard"),
+        el("a", { href: "#", class: "btn btn-primary", style: { flex: 1 } }, "Next problem")
+      );
+      completeCard.appendChild(row);
+    } else {
+      completeCard.style.display = "none";
+    }
+
+    // Reflection
+    reflectionBox.innerHTML = "";
+    if (isComplete && session.status !== "ABANDONED" && session.reflections.length === 0) {
+      const questions = [
+        "What helped you solve this problem?",
+        "What was the hardest step?",
+        "Could you explain this solution to another student?",
+        "What would you do differently next time?"
+      ];
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      const ta = el("textarea", { placeholder: "A sentence or two is enough." });
+      reflectionBox.appendChild(el("div", { class: "card" },
+        el("div", { class: "eyebrow" }, "Quick reflection"),
+        el("p", { class: "mt-2", style: { fontWeight: 500 } }, q),
+        ta,
+        el("button", { class: "btn btn-mint mt-2", style: { width: "100%" },
+          onclick: () => {
+            if (!ta.value.trim()) return;
+            session.reflections.push({ question: q, answer: ta.value.trim() });
+            saveStore(); toast("Reflection saved"); redraw();
+          } }, "Save reflection"),
+        el("button", { class: "muted mt-2", style: { background: "none", border: "none", cursor: "pointer", fontSize: "12px", display: "block", margin: "0 auto" },
+          onclick: () => { reflectionBox.innerHTML = ""; } }, "Skip")
+      ));
+    }
+  }
+
+  function submitAttempt(text, ta) {
+    const answer = text.trim();
+    if (!answer) { toast("Write something first"); return; }
+    const timeTakenSec = Math.round((Date.now() - new Date(session.startedAt).getTime()) / 1000 / Math.max(1, session.attempts.length + 1));
+    const analysis = analyzeAttempt(session, problem, answer);
+
+    const attempt = {
+      id: uid("att"),
+      attemptNumber: session.attempts.length + 1,
+      answer, isCorrect: analysis.isCorrect,
+      hintLevelUsed: session.currentHintLevel,
+      timeTakenSec,
+      mistakeType: analysis.mistakeType,
+      reasoning: analysis.reasoning,
+      reasoningScore: analysis.reasoningScore,
+      aiFeedback: analysis.feedback
+    };
+    session.attempts.push(attempt);
+    session.currentHintLevel = analysis.nextHintLevel;
+
+    // Feedback
+    feedbackBox.innerHTML = "";
+    const fb = el("div", { class: `feedback ${analysis.isCorrect ? "correct" : "wrong"}` },
+      el("div", { class: "flex-between" },
+        el("div", {},
+          el("div", { class: "eyebrow" }, `Attempt #${attempt.attemptNumber} — Analysis`),
+          el("h3", { class: "mt-1" }, analysis.isCorrect ? "Final answer correct ✓" : "Not quite there ×")
+        ),
+        el("div", { style: { textAlign: "right" } },
+          el("div", { class: "muted", style: { fontSize: "11px" } }, "Reasoning score"),
+          el("div", { style: { fontSize: "20px", fontWeight: 600 } }, String(analysis.reasoningScore))
+        )
+      ),
+      el("p", { style: { whiteSpace: "pre-wrap", margin: "12px 0 0", fontSize: "14px" } }, analysis.feedback),
+      el("div", { class: "flex-gap mt-3" },
+        el("span", { class: `badge badge-reason` }, `reasoning: ${analysis.reasoning.toLowerCase()}`),
+        !analysis.isCorrect && analysis.mistakeType !== "NONE"
+          ? el("span", { class: "chip chip-coral" }, analysis.mistakeType.toLowerCase().replace(/_/g, " ")) : null
+      )
+    );
+    feedbackBox.appendChild(fb);
+
+    // Transition status
+    if (analysis.nextAction === "accept") {
+      session.status = "COMPLETED";
+      session.finishedAt = new Date().toISOString();
+      // Prompt confidence if AI-Free
+      if (session.isAiFree && session.confidenceChecks.length === 0) {
+        promptConfidence();
+      }
+      checkAchievements();
+    } else if (analysis.nextAction === "reveal") {
+      // Auto-add full-solution hint
+      session.hints.push(generateHint(problem, 6));
+    }
+
+    saveStore();
+    ta.value = "";
+    redraw();
+  }
+
+  function requestHint() {
+    if (session.currentHintLevel >= 6) return;
+    const nextLevel = session.currentHintLevel + 1;
+    const hint = generateHint(problem, nextLevel);
+    session.hints.push(hint);
+    session.currentHintLevel = hint.level;
+    saveStore();
+    redraw();
+  }
+
+  function promptConfidence() {
+    confidenceBox.innerHTML = "";
+    const card = el("div", { class: "card" },
+      el("div", { class: "eyebrow" }, "Before we finish — how confident are you?"),
+      el("div", { class: "grid grid-5 mt-3", style: { gap: "8px" } },
+        ...[
+          { v: 25, l: "Not confident", c: "chip-coral" },
+          { v: 50, l: "Somewhat", c: "chip-amber" },
+          { v: 75, l: "Confident", c: "chip-mint" },
+          { v: 95, l: "Very confident", c: "chip-mint" }
+        ].map(o => el("button", { class: `chip ${o.c}`, style: { cursor: "pointer", padding: "8px 10px", width: "100%" },
+          onclick: () => {
+            session.confidenceChecks.push({ confidence: o.v, actualCorrect: session.attempts.at(-1)?.isCorrect || false, at: new Date().toISOString() });
+            saveStore();
+            confidenceBox.innerHTML = "";
+            const last = session.attempts.at(-1);
+            const mismatch = (o.v >= 75) !== last?.isCorrect;
+            if (mismatch) {
+              toast(o.v >= 75 && !last?.isCorrect ? "Overconfidence detected — slow down next time." : "Your confidence is lower than your results suggest.");
+            }
+          } }, o.l)
+        )
+      )
+    );
+    confidenceBox.appendChild(card);
+  }
+
+  function checkAchievements() {
+    const before = new Set(STORE.student.achievements || []);
+    const now = new Set(evaluateAchievements());
+    const newOnes = [...now].filter(k => !before.has(k));
+    STORE.student.achievements = [...now];
+    saveStore();
+    for (const k of newOnes) {
+      const def = ACHIEVEMENTS.find(a => a.key === k);
+      if (def) toast(`🏆 Unlocked: ${def.title}`);
+    }
+  }
+
+  redraw();
+}
+
+/* ---------------- DASHBOARD VIEW ---------------- */
+function viewDashboard() {
+  const view = document.getElementById("view");
+  view.innerHTML = "";
+
+  const m = computeMetrics();
+  const earnedKeys = new Set(STORE.student.achievements || []);
+
+  // Hero
+  const hero = el("section", { class: "card mt-4", style: { display: "flex", gap: "24px", flexWrap: "wrap", alignItems: "flex-start" } });
+  const ring = scoreRing(m.independentSuccessRate, 200);
+  ring.appendChild(el("div", { class: "label" }, "Independence Score"));
+  ring.appendChild(el("div", { class: "sub" }, `${m.solvedWithoutFull} / ${m.totalProblems} problems solved without full assistance`));
+  hero.appendChild(ring);
+  const stats = el("div", { style: { flex: 1, minWidth: "280px" }, class: "grid grid-5" });
+  const mk = (label, val, sub, tone) => el("div", {},
+    el("div", { class: "eyebrow" }, label),
+    el("div", { class: "mt-1", style: { fontSize: "22px", fontWeight: 600, color: tone } }, val),
+    sub ? el("div", { class: "muted mt-1", style: { fontSize: "11px" } }, sub) : null
+  );
+  stats.appendChild(mk("AI-Free success", `${Math.round(m.aiFreeSuccessRate*100)}%`, `${m.aiFreeAttempts} attempts`, m.aiFreeSuccessRate >= 0.5 ? "#219a73" : "#a96a00"));
+  stats.appendChild(mk("Average hints", m.hintDependency.toFixed(1), "per problem", m.hintDependency <= 2 ? "#219a73" : "#a96a00"));
+  stats.appendChild(mk("First-attempt accuracy", `${Math.round(m.firstAttemptAccuracy*100)}%`, null, m.firstAttemptAccuracy >= 0.5 ? "#219a73" : "#a96a00"));
+  stats.appendChild(mk("Retry success", `${Math.round(m.retrySuccessRate*100)}%`, null, m.retrySuccessRate >= 0.6 ? "#219a73" : "#a96a00"));
+  stats.appendChild(mk("Total attempts", String(m.totalAttempts), null, "#141820"));
+  hero.appendChild(stats);
+  view.appendChild(hero);
+
+  // Hint trend card
+  const recent = STORE.sessions.slice(0, 10);
+  const recentHints = recent.reduce((n, s) => n + s.hints.length, 0);
+  const recentAvg = recent.length ? (recentHints / recent.length).toFixed(1) : "0.0";
+  const trendCard = el("div", { class: "card mt-4" },
+    el("div", { class: "eyebrow" }, "Hint dependency trend"),
+    el("p", { class: "muted mt-1" }, "Average hints per problem over your last 10 sessions"),
+    el("div", { class: "flex-gap mt-3", style: { gap: "24px" } },
+      el("div", {}, el("div", { class: "muted", style: { fontSize: "12px" } }, "Recent average"),
+        el("div", { style: { fontSize: "24px", fontWeight: 600 } }, recentAvg)),
+      el("div", {}, el("div", { class: "muted", style: { fontSize: "12px" } }, "Target"),
+        el("div", { style: { fontSize: "24px", fontWeight: 600 } }, "≤ 2.0"))
+    ),
+    el("p", { class: "mt-3", style: { fontSize: "13px", color: "#5a6779" } },
+      parseFloat(recentAvg) <= 2 ? "You're becoming more independent. Keep solving problems on your own first."
+      : "You're leaning on hints. Try an AI-Free challenge to reset.")
+  );
+  view.appendChild(trendCard);
+
+  // Achievements
+  const achCard = el("div", { class: "card mt-4" },
+    el("div", { class: "eyebrow" }, `Achievements (${earnedKeys.size}/${ACHIEVEMENTS.length})`)
+  );
+  const achGrid = el("div", { class: "grid grid-2 mt-3" });
+  for (const a of ACHIEVEMENTS) {
+    const unlocked = earnedKeys.has(a.key);
+    const item = el("div", { style: {
+      padding: "12px", borderRadius: "12px",
+      border: `1px solid ${unlocked ? "rgba(47,184,140,0.3)" : "#eceef2"}`,
+      background: unlocked ? "rgba(47,184,140,0.05)" : "#fff",
+      opacity: unlocked ? "1" : "0.6",
+      display: "flex", gap: "12px", alignItems: "flex-start"
+    } },
+      el("div", { style: { fontSize: "24px" } }, a.icon),
+      el("div", {},
+        el("div", { style: { fontSize: "14px", fontWeight: 600 } }, a.title,
+          unlocked ? el("span", { class: "badge badge-ok", style: { marginLeft: "6px" } }, "Unlocked") : null),
+        el("div", { class: "muted mt-1", style: { fontSize: "12px" } }, a.desc)
+      )
+    );
+    achGrid.appendChild(item);
+  }
+  achCard.appendChild(achGrid);
+  view.appendChild(achCard);
+
+  // Recent sessions
+  if (STORE.sessions.length > 0) {
+    const histCard = el("div", { class: "card mt-4" }, el("div", { class: "eyebrow" }, "Recent sessions"));
+    const list = el("div", { class: "mt-3" });
+    for (const s of STORE.sessions.slice(0, 10)) {
+      const p = getProblem(s.problemId);
+      if (!p) continue;
+      const row = el("div", { class: "attempt-item", style: { cursor: "pointer" }, onclick: () => location.hash = `session/${s.id}` },
+        el("div", { class: "flex-between" },
+          el("div", { class: "flex-gap" },
+            el("span", { style: { fontWeight: 500 } }, p.title),
+            el("span", { class: `badge ${s.status === "COMPLETED" ? "badge-ok" : s.status === "REVEALED" ? "badge-no" : "badge-reason"}` }, s.status),
+            s.isAiFree ? el("span", { class: "chip chip-amber", style: { fontSize: "10px" } }, "AI-Free") : null
+          ),
+          el("div", { class: "muted", style: { fontSize: "11px" } },
+            `${s.attempts.length} attempts · ${s.hints.length} hints · ${new Date(s.startedAt).toLocaleDateString()}`)
+        )
+      );
+      list.appendChild(row);
+    }
+    histCard.appendChild(list);
+    view.appendChild(histCard);
+  }
+}
+
+/* =========================================================================
+ * ROUTER
+ * ========================================================================= */
+function route() {
+  const hash = location.hash.slice(1); // remove '#'
+  if (!hash || hash === "" || hash === "home") viewHome();
+  else if (hash === "dashboard") viewDashboard();
+  else if (hash.startsWith("session/")) viewSession(hash.split("/")[1]);
+  else viewHome();
+  renderStudentBadge();
+  window.scrollTo(0, 0);
+}
+
+/* =========================================================================
+ * BOOT
+ * ========================================================================= */
+loadStore();
+renderStudentBadge();
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>

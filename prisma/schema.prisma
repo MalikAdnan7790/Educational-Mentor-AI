@@ -1,0 +1,717 @@
+// Educational Mentor AI — Prisma schema
+// Focused on Independent Mode: attempt tracking, progressive hints,
+// mistake classification, reasoning evaluation, and independence analytics.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum LearningMode {
+  DEPENDENT
+  GUIDED
+  ADAPTIVE
+  INDEPENDENT
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  REAL_WORLD
+}
+
+enum Subject {
+  MATH
+  PHYSICS
+  CHEMISTRY
+  BIOLOGY
+  CS
+  PROGRAMMING
+  LANGUAGE
+  HISTORY
+  OTHER
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+  REVEALED
+}
+
+enum MistakeType {
+  NONE
+  CONCEPT_GAP
+  CALCULATION_ERROR
+  CARELESS_MISTAKE
+  WRONG_FORMULA
+  WRONG_METHOD
+  QUESTION_MISUNDERSTANDING
+  INCOMPLETE_REASONING
+  SYNTAX_ERROR
+  LOGICAL_ERROR
+}
+
+enum ReasoningQuality {
+  STRONG
+  ADEQUATE
+  WEAK
+  INCORRECT
+}
+
+enum EducationLevel {
+  SCHOOL
+  COLLEGE
+  UNIVERSITY
+  PROFESSIONAL
+}
+
+enum LanguagePref {
+  EN
+  UR
+  ROMAN_UR
+}
+
+enum TeacherAvatar {
+  MALE
+  FEMALE
+}
+
+enum ConversationKind {
+  VOICE
+  TEXT
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum MessageSource {
+  VOICE_STT
+  VOICE_TTS
+  TEXT_USER
+  TEXT_ASSISTANT
+  SYSTEM
+}
+
+enum MistakeStatus {
+  OPEN
+  REVIEWED
+  RESOLVED
+}
+
+enum ActionStatus {
+  PENDING
+  DONE
+  DISMISSED
+}
+
+enum ChallengeStatus {
+  PENDING
+  SUBMITTED
+  GRADED
+  ABANDONED
+}
+
+enum MissionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+enum MissionStepKind {
+  MINI_LESSON
+  PRACTICE_1
+  PRACTICE_2
+  CHALLENGE
+  RE_TEST
+}
+
+enum MissionStepStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum VivaStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+enum ExamStatus {
+  ACTIVE
+  GRADED
+  ABANDONED
+}
+
+enum ExamQuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT_ANSWER
+  CONCEPTUAL
+  CODE
+}
+
+model Student {
+  id                String         @id @default(cuid())
+  name              String
+  email             String?        @unique
+  passwordHash      String?
+  educationLevel    EducationLevel @default(SCHOOL)
+  preferredLanguage LanguagePref   @default(EN)
+  teacherAvatar     TeacherAvatar  @default(MALE)
+  voiceRate         Float          @default(1.0)
+  lastLoginAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  preferredMode     LearningMode   @default(GUIDED)
+  currentDifficulty Difficulty     @default(MEDIUM)
+  preferredSubject  Subject        @default(MATH)
+
+  sessions            AttemptSession[]
+  confidenceChecks    ConfidenceCheck[]
+  reflections         Reflection[]
+  achievements        Achievement[]
+  independentScore    IndependentScore?
+  hintEvents          HintEvent[]
+  authSessions        AuthSession[]
+  subjects            StudentSubject[]
+  conversations       Conversation[]
+  mistakeRecords      MistakeRecord[]
+  knowledgeRecords    KnowledgeRecord[]
+  confidenceRecords   ConfidenceRecord[]
+  explainBacks        ExplainBack[]
+  nextBestActions     NextBestAction[]
+  challenges          Challenge[]
+  missions            Mission[]
+  vivas               VivaSession[]
+  exams               Exam[]
+  notes               NoteDocument[]
+  explainAnswers      ExplainAnswer[]
+}
+
+model AuthSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
+}
+
+model Problem {
+  id         String     @id @default(cuid())
+  slug       String     @unique
+  subject    Subject
+  topic      String
+  difficulty Difficulty
+  title      String
+  content    String
+  // canonical final answer
+  solution   String
+  // optional: structured breakdown used by reasoning evaluation
+  stepsJson  String?
+  createdAt  DateTime   @default(now())
+
+  sessions AttemptSession[]
+}
+
+model AttemptSession {
+  id              String        @id @default(cuid())
+  studentId       String
+  student         Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  problemId       String
+  problem         Problem       @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  mode            LearningMode  @default(INDEPENDENT)
+  isAiFree        Boolean       @default(false)
+  startedAt       DateTime      @default(now())
+  finishedAt      DateTime?
+  status          SessionStatus @default(ACTIVE)
+  currentHintLevel Int          @default(0)
+  finalResult     MistakeType   @default(NONE)
+  watchOutJson    String?       // predicted common mistakes shown before solving
+
+  attempts         Attempt[]
+  hintEvents       HintEvent[]
+  confidenceChecks ConfidenceCheck[]
+  reflections      Reflection[]
+  explainAnswers   ExplainAnswer[]
+
+  @@index([studentId, status])
+}
+
+model Attempt {
+  id            String           @id @default(cuid())
+  sessionId     String
+  session       AttemptSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  attemptNumber Int
+  answer        String
+  isCorrect     Boolean          @default(false)
+  hintLevelUsed Int              @default(0)
+  timeTakenSec  Int?
+  mistakeType   MistakeType      @default(NONE)
+  reasoning     ReasoningQuality @default(ADEQUATE)
+  aiFeedback    String
+  createdAt     DateTime         @default(now())
+
+  @@unique([sessionId, attemptNumber])
+}
+
+model HintEvent {
+  id           String         @id @default(cuid())
+  sessionId    String
+  session      AttemptSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  level        Int
+  content      String
+  requestedAt  DateTime       @default(now())
+}
+
+model ConfidenceCheck {
+  id          String         @id @default(cuid())
+  sessionId   String
+  session     AttemptSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  attemptId   String?
+  confidence  Int            // 0..100
+  actualCorrect Boolean      @default(false)
+  createdAt   DateTime       @default(now())
+}
+
+model Reflection {
+  id        String         @id @default(cuid())
+  sessionId String
+  session   AttemptSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  question  String
+  answer    String
+  createdAt DateTime       @default(now())
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  key         String   // stable identifier, e.g. "first_independent"
+  title       String
+  description String
+  unlockedAt  DateTime @default(now())
+
+  @@unique([studentId, key])
+}
+
+model IndependentScore {
+  id                   String   @id @default(cuid())
+  studentId            String   @unique
+  student              Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  totalProblems        Int      @default(0)
+  solvedWithoutFull    Int      @default(0)
+  firstAttemptCorrect  Int      @default(0)
+  totalAttempts        Int      @default(0)
+  totalHints           Int      @default(0)
+  aiFreeAttempts       Int      @default(0)
+  aiFreeSuccess        Int      @default(0)
+  retrySuccesses       Int      @default(0)
+  retryOpportunities   Int      @default(0)
+  lastWeekAvgHints     Float    @default(0)
+  thisWeekAvgHints     Float    @default(0)
+  updatedAt            DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+// ---- Subject catalog, teacher profiles, student enrollment ----
+
+model SubjectCatalog {
+  id         String   @id @default(cuid())
+  key        String   @unique // stable slug e.g. "math_algebra"
+  name       String
+  category   String   // "School", "University CS", "Engineering", ...
+  level      EducationLevel @default(SCHOOL)
+  isActive   Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  topics     Topic[]
+  enrollments StudentSubject[]
+  profiles    TeacherProfile[]
+
+  @@index([category, isActive])
+}
+
+model Topic {
+  id         String   @id @default(cuid())
+  subjectId  String
+  subject    SubjectCatalog  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  name       String
+  slug       String
+
+  @@unique([subjectId, slug])
+}
+
+// One profile per subject (subjectKey unique) OR category-level fallback (category unique)
+model TeacherProfile {
+  id               String   @id @default(cuid())
+  subjectId        String?  @unique
+  subject          SubjectCatalog? @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  category         String?  @unique
+  style            String   // e.g. "Socratic, calm, step-by-step"
+  focusJson        String   // JSON: ["clarity","rigour",...]
+  commonMistakesJson String // JSON: [{name, description}]
+  examplesJson     String   // JSON: [{prompt, response}]
+  rulesJson        String   // JSON: ["rule1", "rule2"]
+  createdAt        DateTime @default(now())
+}
+
+model StudentSubject {
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId String
+  subject   SubjectCatalog @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([studentId, subjectId])
+  @@index([subjectId])
+}
+
+// ---- Conversations (text + voice) and messages ----
+
+model Conversation {
+  id           String             @id @default(cuid())
+  studentId    String
+  student      Student            @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  kind         ConversationKind   @default(TEXT)
+  mode         LearningMode       @default(GUIDED)
+  isAiFree     Boolean            @default(false)
+  language     LanguagePref       @default(EN)
+  subjectKey   String?
+  topic        String?
+  title        String?
+  status       ConversationStatus @default(ACTIVE)
+  lastMessageAt DateTime          @default(now())
+  messageCount Int                @default(0)
+  createdAt    DateTime           @default(now())
+
+  messages     Message[]
+  explainBacks ExplainBack[]
+
+  @@index([studentId, status])
+  @@index([studentId, kind])
+}
+
+model Message {
+  id                 String        @id @default(cuid())
+  conversationId     String
+  conversation       Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role               MessageRole
+  content            String
+  language           LanguagePref?
+  source             MessageSource
+  hintLevel          Int           @default(0)
+  wasFullExplanation Boolean       @default(false)
+  tokensIn           Int?
+  tokensOut          Int?
+  metaJson           String?       // JSON: {checkQuestion, topic, ...}
+  createdAt          DateTime      @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+// ---- Mistake DNA, knowledge, confidence ----
+
+model MistakeRecord {
+  id             String         @id @default(cuid())
+  studentId      String
+  student        Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectKey     String?
+  topic          String?
+  mistakeType    String         // maps to MistakeType values as strings (loose coupling)
+  description    String
+  why            String?
+  status         MistakeStatus  @default(OPEN)
+  source         String         // "session", "voice", "chat", "explain-back"
+  sessionId      String?
+  conversationId String?
+  occurrences    Int            @default(1)
+  lastSeenAt     DateTime       @default(now())
+  createdAt      DateTime       @default(now())
+
+  @@index([studentId, status])
+  @@index([studentId, mistakeType])
+}
+
+model KnowledgeRecord {
+  id           String  @id @default(cuid())
+  studentId    String
+  student      Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectKey   String
+  topic        String
+  masteryPct   Float   @default(0)
+  evidenceCount Int    @default(0)
+  updatedAt    DateTime @updatedAt
+
+  @@unique([studentId, subjectKey, topic])
+}
+
+model ConfidenceRecord {
+  id            String   @id @default(cuid())
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectKey    String?
+  topic         String?
+  confidencePct Float
+  actualCorrect Boolean?
+  context       String?
+  createdAt     DateTime @default(now())
+
+  @@index([studentId, subjectKey, topic])
+}
+
+// ---- Explain-it-back, next best action, challenges ----
+
+model ExplainBack {
+  id               String       @id @default(cuid())
+  studentId        String
+  student          Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  conversationId   String?
+  conversation     Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  subjectKey       String?
+  topic            String
+  explanation      String
+  analysisJson     String       // {accuracyPct, completenessPct, reasoningPct, misconceptions}
+  understandingScore Float      @default(0)
+  accuracyPct      Float        @default(0)
+  completenessPct  Float        @default(0)
+  reasoningPct     Float        @default(0)
+  createdAt        DateTime     @default(now())
+
+  @@index([studentId, createdAt])
+}
+
+model NextBestAction {
+  id          String       @id @default(cuid())
+  studentId   String
+  student     Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  why         String
+  estMinutes  Int
+  subjectKey  String?
+  topic       String?
+  actionType  String       // "PRACTICE", "CHALLENGE", "EXPLAIN_BACK", "VOICE_SESSION", ...
+  targetRef   String?
+  status      ActionStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+
+  @@index([studentId, status])
+}
+
+model Challenge {
+  id              String          @id @default(cuid())
+  studentId       String
+  student         Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectKey      String?
+  topic           String?
+  difficulty      Difficulty      @default(MEDIUM)
+  problemText     String
+  solution        String          // canonical answer; NEVER sent to client before submit
+  studentSolution String?
+  analysisJson    String?         // grading breakdown
+  score           Float?
+  confidencePct   Float?
+  status          ChallengeStatus @default(PENDING)
+  isDaily         Boolean         @default(false)
+  dayKey          String?         // "2026-09-01" for daily challenge gating
+  createdAt       DateTime        @default(now())
+
+  @@index([studentId, status])
+  @@index([studentId, dayKey])
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Ask My Teacher ecosystem
+// ─────────────────────────────────────────────────────────────────
+
+// Mistake → Mission: auto-created personalized learning mission
+model Mission {
+  id            String        @id @default(cuid())
+  studentId     String
+  student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  topic         String
+  title         String
+  description   String
+  weaknessKey   String        // mistake type or concept identifier
+  sourceMistakeId String?
+  status        MissionStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  completedAt   DateTime?
+
+  steps         MissionStep[]
+
+  @@index([studentId, status])
+  @@index([studentId, weaknessKey])
+}
+
+model MissionStep {
+  id           String            @id @default(cuid())
+  missionId    String
+  mission      Mission           @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  order        Int
+  kind         MissionStepKind
+  content      String            // mini lesson text or question text
+  answer       String?           // canonical answer; hidden until passed
+  status       MissionStepStatus @default(PENDING)
+  studentAnswer String?
+  analysisJson String?
+  score        Float?
+  attempts     Int               @default(0)
+  createdAt    DateTime          @default(now())
+  completedAt  DateTime?
+
+  @@unique([missionId, order])
+}
+
+// AI Viva: one question at a time, evaluated for correctness + understanding
+model VivaSession {
+  id          String       @id @default(cuid())
+  studentId   String
+  student     Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectKey  String?
+  topic       String
+  difficulty  Difficulty   @default(MEDIUM)
+  language    LanguagePref @default(EN)
+  status      VivaStatus   @default(ACTIVE)
+  questionCount Int        @default(5)
+  totalScore  Float?
+  summaryJson String?      // {strongAreas, weakAreas, practiceTopics, feedback}
+  createdAt   DateTime     @default(now())
+  completedAt DateTime?
+
+  questions   VivaQuestion[]
+
+  @@index([studentId, status])
+}
+
+model VivaQuestion {
+  id            String       @id @default(cuid())
+  vivaId        String
+  viva          VivaSession  @relation(fields: [vivaId], references: [id], onDelete: Cascade)
+  order         Int
+  question      String
+  concept       String?      // what this question tests
+  studentAnswer String?
+  isCorrect     Boolean?
+  understanding Float?       // 0-100 depth of understanding shown
+  feedback      String?
+  score         Float?
+  createdAt     DateTime     @default(now())
+
+  @@unique([vivaId, order])
+}
+
+// Exam Simulator + Notes → Quiz (exams generated from notes set sourceNoteId)
+model Exam {
+  id            String     @id @default(cuid())
+  studentId     String
+  student       Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title         String
+  subjectKey    String?
+  topic         String?
+  difficulty    Difficulty @default(MEDIUM)
+  timeLimitSec  Int?
+  questionCount Int
+  status        ExamStatus @default(ACTIVE)
+  score         Float?
+  summaryJson   String?    // {correct, wrong, weakTopics, revision, mistakeAnalysis}
+  sourceNoteId  String?
+  note          NoteDocument? @relation(fields: [sourceNoteId], references: [id], onDelete: SetNull)
+  createdAt     DateTime   @default(now())
+  submittedAt   DateTime?
+
+  questions     ExamQuestion[]
+
+  @@index([studentId, status])
+}
+
+model ExamQuestion {
+  id            String           @id @default(cuid())
+  examId        String
+  exam          Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
+  order         Int
+  type          ExamQuestionType
+  question      String
+  optionsJson   String?          // MCQ: string[]; TRUE_FALSE: ["True","False"]
+  answer        String           // canonical answer; hidden until submit
+  studentAnswer String?
+  isCorrect     Boolean?
+  analysis      String?
+  points        Float            @default(1)
+
+  @@unique([examId, order])
+}
+
+// Notes → Teacher / Knowledge base (RAG): uploaded study material
+model NoteDocument {
+  id              String   @id @default(cuid())
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title           String
+  sourceType      String   // PDF, DOCX, TXT, MD
+  charCount       Int
+  summary         String?  // cached summary
+  keyPointsJson   String?  // cached key points
+  flashcardsJson  String?  // cached flashcards
+  createdAt       DateTime @default(now())
+
+  chunks          NoteChunk[]
+  exams           Exam[]
+
+  @@index([studentId])
+}
+
+model NoteChunk {
+  id      String        @id @default(cuid())
+  docId   String
+  doc     NoteDocument  @relation(fields: [docId], references: [id], onDelete: Cascade)
+  idx     Int
+  content String
+
+  @@unique([docId, idx])
+}
+
+// Explain My Answer: post-solve reasoning evaluation (answer vs reasoning graded separately)
+model ExplainAnswer {
+  id               String         @id @default(cuid())
+  studentId        String
+  student          Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  sessionId        String
+  session          AttemptSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  attemptId        String?
+  answerWasCorrect Boolean
+  explanation      String
+  reasoningCorrect Boolean
+  reasoningScore   Float           // 0-100
+  feedback         String
+  createdAt        DateTime        @default(now())
+
+  @@index([studentId, createdAt])
+}
