@@ -8,7 +8,7 @@ import type { NextRequest } from "next/server";
  */
 
 const SESSION_COOKIE = "emai_session";
-const PUBLIC_PAGES = ["/login", "/register"];
+const PUBLIC_PAGES = ["/", "/login", "/register"];
 const PUBLIC_APIS = ["/api/auth"];
 
 export function middleware(req: NextRequest) {
@@ -30,7 +30,7 @@ export function middleware(req: NextRequest) {
       return addSecurityHeaders(NextResponse.json({ error: "unauthorized" }, { status: 401 }));
     }
     const loginUrl = new URL("/login", req.url);
-    if (pathname !== "/") loginUrl.searchParams.set("next", pathname);
+    loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
