@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "prisma generate && next build",
+    "vercel-build": "prisma generate && next build && tsx scripts/push-schema-to-turso.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
