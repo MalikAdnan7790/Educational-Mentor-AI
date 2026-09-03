@@ -9,7 +9,7 @@ interface FileUploadProps {
 }
 
 const ACCEPT = ".docx,.txt,.md,.markdown";
-const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_BYTES = 3 * 1024 * 1024;
 
 export function FileUpload({ onText, disabled }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +27,7 @@ export function FileUpload({ onText, disabled }: FileUploadProps) {
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError("File is too large (max 10 MB).");
+      setError("File is too large (max 3 MB).");
       return;
     }
 
@@ -103,7 +103,7 @@ function friendlyError(code: string): string {
     case "unsupported_type":
       return "Unsupported file type.";
     case "file_too_large":
-      return "File is too large (max 10 MB).";
+      return "File is too large (max 3 MB).";
     case "empty_file":
       return "The file is empty.";
     case "no_text_extracted":

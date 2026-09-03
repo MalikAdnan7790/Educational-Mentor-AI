@@ -5,7 +5,7 @@ import mammoth from "mammoth";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_BYTES = 3 * 1024 * 1024;
 const MAX_TEXT_CHARS = 60_000;
 
 const ALLOWED: Record<string, "DOCX" | "TXT" | "MD"> = {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "invalid_input" }, { status: 400 });
+    return NextResponse.json({ error: "file_too_large", message: "Request body too large. Try a smaller file (max 3 MB)." }, { status: 413 });
   }
 
   const { filename, fileBase64 } = body;

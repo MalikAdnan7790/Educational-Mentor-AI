@@ -68,11 +68,15 @@ export const createConversationSchema = z.object({
   title: z.string().max(200).optional(),
 });
 
-export const sendMessageSchema = z.object({
-  content: z.string().min(1).max(4000),
-  imageBase64: z.string().max(10_000_000).optional(),
-  teacherAction: z.enum(["HINT", "GUIDE", "CHECK", "MISTAKE", "CONCEPT", "SOLUTION"]).optional(),
-});
+export const sendMessageSchema = z
+  .object({
+    content: z.string().max(4000).default(""),
+    imageBase64: z.string().max(10_000_000).optional(),
+    teacherAction: z.enum(["HINT", "GUIDE", "CHECK", "MISTAKE", "CONCEPT", "SOLUTION"]).optional(),
+  })
+  .refine((v) => !!v.content.trim() || !!v.imageBase64, {
+    message: "Provide a question or attach an image",
+  });
 
 export const analyzeUploadSchema = z
   .object({
