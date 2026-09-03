@@ -31,10 +31,10 @@ export function ModeSelector({
           disabled={disabled}
           onClick={() => onChange(m.value)}
           className={
-            "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors " +
+            "rounded-full px-3 py-1.5 text-xs font-bold transition-colors border-2 " +
             (value === m.value
-              ? "bg-ink-900 text-white"
-              : "border border-ink-200 bg-white text-ink-600 hover:bg-ink-50 disabled:opacity-50")
+              ? "bg-mint-400 text-white border-mint-500"
+              : "border-ink-200 bg-white text-ink-600 hover:bg-ink-50 hover:border-ink-300 disabled:opacity-50")
           }
           title={m.desc}
         >
@@ -47,10 +47,10 @@ export function ModeSelector({
         onClick={() => onAiFreeChange(!isAiFree)}
         aria-pressed={isAiFree}
         className={
-          "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors " +
+          "rounded-full px-3 py-1.5 text-xs font-bold transition-colors border-2 " +
           (isAiFree
-            ? "bg-coral-500 text-white"
-            : "border border-ink-200 bg-white text-ink-600 hover:bg-ink-50 disabled:opacity-50")
+            ? "bg-coral-500 text-white border-coral-600"
+            : "border-ink-200 bg-white text-ink-600 hover:bg-ink-50 hover:border-ink-300 disabled:opacity-50")
         }
         title="No AI help"
       >

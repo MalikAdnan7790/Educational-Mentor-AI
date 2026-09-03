@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { FileUp } from "lucide-react";
 
 const MAX_PAGES = 15;
 
@@ -54,16 +55,16 @@ export function PdfUpload({ onText, disabled }: PdfUploadProps) {
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={disabled || processing}
-        className="btn-ghost px-3 py-1.5 text-xs gap-1.5"
+        className="flex items-center gap-1.5 rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-600 hover:border-amber-400 hover:bg-amber-100 transition-colors disabled:opacity-50"
         title="Attach a PDF"
       >
         {processing ? (
-          <span className="animate-pulse">Reading…</span>
+          <span className="animate-pulse">Reading...</span>
         ) : (
           <>
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
+            <span className="flex h-5 w-5 items-center justify-center rounded-lg bg-amber-200">
+              <FileUp className="h-3 w-3 text-amber-600" />
+            </span>
             PDF
           </>
         )}

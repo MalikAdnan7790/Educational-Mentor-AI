@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
+import { Mic, MessageCircle, ScrollText } from "lucide-react";
 
 interface Conversation {
   id: string;
@@ -44,9 +45,14 @@ export default function HistoryPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-ink-900">History</h1>
-          <p className="text-sm text-ink-500 mt-0.5">Your past conversations and voice sessions.</p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/15 text-amber-500">
+            <ScrollText className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-ink-900">History</h1>
+            <p className="text-sm text-ink-500">Your past conversations and voice sessions.</p>
+          </div>
         </div>
         <div className="flex gap-1.5">
           {(["ALL", "TEXT", "VOICE"] as const).map((f) => (
@@ -54,7 +60,7 @@ export default function HistoryPage() {
               key={f}
               onClick={() => setFilter(f)}
               className={clsx(
-                "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                "rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors",
                 filter === f ? "bg-ink-900 text-white" : "border border-ink-200 text-ink-600 hover:bg-ink-50",
               )}
             >
@@ -81,11 +87,11 @@ export default function HistoryPage() {
             >
               <div
                 className={clsx(
-                  "flex h-10 w-10 items-center justify-center rounded-full text-lg",
-                  c.kind === "VOICE" ? "bg-blue-50" : "bg-mint-500/10",
+                  "flex h-10 w-10 items-center justify-center rounded-xl",
+                  c.kind === "VOICE" ? "bg-sky-400/15 text-sky-500" : "bg-mint-400/15 text-mint-500",
                 )}
               >
-                {c.kind === "VOICE" ? "🎙️" : "💬"}
+                {c.kind === "VOICE" ? <Mic className="h-5 w-5" /> : <MessageCircle className="h-5 w-5" />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-ink-900 truncate">

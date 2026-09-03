@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { Send, X, FileText, FileImage, File } from "lucide-react";
 import { ImageUpload } from "./image-upload";
 import { PdfUpload } from "./pdf-upload";
 import { FileUpload } from "./file-upload";
@@ -56,7 +57,7 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
   const canSend = !disabled && (text.trim().length > 0 || !!imageBase64);
 
   return (
-    <div className="border-t border-ink-100 bg-white px-4 py-3">
+    <div className="border-t-2 border-ink-100 bg-white px-4 py-3">
       {/* Attachment previews */}
       {(imageBase64 || pdfText || docFile) && (
         <div className="mb-2 flex gap-2 flex-wrap">
@@ -65,50 +66,46 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
               <img
                 src={imageBase64}
                 alt="Attached question"
-                className="h-20 w-20 rounded-lg object-cover border border-ink-200"
+                className="h-20 w-20 rounded-xl object-cover border-2 border-ink-200"
               />
-              <span className="absolute top-1 left-1 rounded bg-ink-900/70 px-1.5 py-0.5 text-[9px] font-semibold text-white">
+              <span className="absolute top-1 left-1 rounded-lg bg-mint-400 px-1.5 py-0.5 text-[9px] font-bold text-white">
                 Question
               </span>
               <button
                 type="button"
                 onClick={() => setImageBase64(null)}
                 aria-label="Remove attached image"
-                className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-ink-900 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-coral-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                ×
+                <X className="h-3 w-3" />
               </button>
             </div>
           )}
           {pdfText && (
-            <div className="relative group flex items-center gap-1.5 rounded-lg border border-ink-200 bg-ink-50 px-2.5 py-1.5 text-xs text-ink-600 max-w-[200px]">
-              <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-              <span className="truncate">{pdfText.slice(0, 60)}…</span>
+            <div className="relative group flex items-center gap-1.5 rounded-xl border-2 border-ink-200 bg-ink-50 px-2.5 py-1.5 text-xs text-ink-600 max-w-[200px]">
+              <FileText className="h-3.5 w-3.5 shrink-0 text-purple-500" />
+              <span className="truncate">{pdfText.slice(0, 60)}...</span>
               <button
                 type="button"
                 onClick={() => setPdfText(null)}
                 aria-label="Remove PDF attachment"
-                className="ml-1 shrink-0 text-ink-400 hover:text-ink-600"
+                className="ml-1 shrink-0 text-ink-400 hover:text-coral-500"
               >
-                ×
+                <X className="h-3 w-3" />
               </button>
             </div>
           )}
           {docFile && (
-            <div className="relative group flex items-center gap-1.5 rounded-lg border border-ink-200 bg-ink-50 px-2.5 py-1.5 text-xs text-ink-600 max-w-[220px]">
-              <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+            <div className="relative group flex items-center gap-1.5 rounded-xl border-2 border-ink-200 bg-ink-50 px-2.5 py-1.5 text-xs text-ink-600 max-w-[220px]">
+              <File className="h-3.5 w-3.5 shrink-0 text-sky-500" />
               <span className="truncate">{docFile.filename}</span>
               <button
                 type="button"
                 onClick={() => setDocFile(null)}
                 aria-label="Remove file attachment"
-                className="ml-1 shrink-0 text-ink-400 hover:text-ink-600"
+                className="ml-1 shrink-0 text-ink-400 hover:text-coral-500"
               >
-                ×
+                <X className="h-3 w-3" />
               </button>
             </div>
           )}
@@ -134,11 +131,11 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={isAiFree ? "AI-Free mode — try working it out first!" : "Ask anything…"}
+          placeholder={isAiFree ? "AI-Free mode \u2014 try working it out first!" : "Ask anything\u2026"}
           disabled={disabled}
           rows={1}
           aria-label="Message input"
-          className="input min-h-[44px] max-h-[160px] resize-none py-2.5 text-sm"
+          className="input min-h-[44px] max-h-[160px] resize-none py-2.5 text-sm rounded-xl border-2 border-ink-200 focus:border-mint-400"
         />
 
         {/* Send button */}
@@ -147,11 +144,9 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
           onClick={handleSend}
           disabled={!canSend}
           aria-label="Send message"
-          className="btn-primary shrink-0 px-3 py-2.5"
+          className="shrink-0 h-10 w-10 rounded-full bg-mint-400 hover:bg-mint-500 text-white flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
+          <Send className="h-4 w-4" />
         </button>
       </div>
     </div>

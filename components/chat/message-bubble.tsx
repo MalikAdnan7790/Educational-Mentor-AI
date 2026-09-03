@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, memo } from "react";
 import { clsx } from "clsx";
+import { Volume2, Pause, ThumbsUp, ThumbsDown } from "lucide-react";
 
 interface MessageBubbleProps {
   role: "USER" | "ASSISTANT";
@@ -94,10 +95,10 @@ export const MessageBubble = memo(function MessageBubble({ role, content, langua
     <div className={clsx("flex", isUser ? "justify-end" : "justify-start")}>
       <div
         className={clsx(
-          "max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm",
+          "max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm border-2",
           isUser
-            ? "bg-ink-900 text-white rounded-br-md"
-            : "bg-white border border-ink-100 text-ink-800 rounded-bl-md",
+            ? "bg-mint-400 text-white rounded-br-sm border-mint-500"
+            : "bg-ink-50 text-ink-800 rounded-bl-sm border-ink-100",
         )}
         dir={isUrdu ? "rtl" : "ltr"}
         lang={isUrdu ? "ur" : language === "ROMAN_UR" ? "ur-Latn" : "en"}
@@ -115,63 +116,45 @@ export const MessageBubble = memo(function MessageBubble({ role, content, langua
             type="button"
             onClick={playTts}
             className={clsx(
-              "p-1 rounded transition-colors",
+              "p-1.5 rounded-xl transition-colors",
               ttsPlaying
-                ? "text-blue-600 bg-blue-50"
-                : "text-ink-300 hover:text-blue-500 hover:bg-blue-50",
+                ? "text-sky-500 bg-sky-50"
+                : "text-ink-300 hover:text-sky-500 hover:bg-sky-50",
             )}
             aria-label={ttsPlaying ? "Stop reading" : "Read aloud"}
             title={ttsPlaying ? "Stop reading" : "Read aloud"}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {ttsPlaying ? (
-                <>
-                  <rect x="6" y="4" width="4" height="16" />
-                  <rect x="14" y="4" width="4" height="16" />
-                </>
-              ) : (
-                <>
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                </>
-              )}
-            </svg>
+            {ttsPlaying ? <Pause className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
           </button>
           <button
             type="button"
             onClick={() => submitFeedback("UP")}
             disabled={feedbackLoading}
             className={clsx(
-              "p-1 rounded transition-colors",
+              "p-1.5 rounded-xl transition-colors",
               feedback === "UP"
-                ? "text-emerald-600 bg-emerald-50"
-                : "text-ink-300 hover:text-emerald-500 hover:bg-emerald-50",
+                ? "text-mint-500 bg-mint-50"
+                : "text-ink-300 hover:text-mint-500 hover:bg-mint-50",
             )}
             aria-label="Helpful response"
             title="This was helpful"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 10v12" />
-              <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
-            </svg>
+            <ThumbsUp className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
             onClick={() => submitFeedback("DOWN")}
             disabled={feedbackLoading}
             className={clsx(
-              "p-1 rounded transition-colors",
+              "p-1.5 rounded-xl transition-colors",
               feedback === "DOWN"
-                ? "text-red-500 bg-red-50"
-                : "text-ink-300 hover:text-red-400 hover:bg-red-50",
+                ? "text-coral-500 bg-coral-50"
+                : "text-ink-300 hover:text-coral-500 hover:bg-coral-50",
             )}
             aria-label="Not helpful"
             title="This wasn't helpful"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 14V2" />
-              <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />
-            </svg>
+            <ThumbsDown className="h-3.5 w-3.5" />
           </button>
         </div>
       )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { MessageCircle } from "lucide-react";
 import { ChatView, type ChatViewHandle } from "@/components/chat/chat-view";
 import { AskMyTeacher } from "@/components/chat/ask-my-teacher";
 import { getTeacherAction, type TeacherActionId } from "@/lib/teacher-actions";
@@ -61,19 +62,30 @@ export default function AskPage() {
 
   return (
     <div className="mx-auto flex h-[calc(100vh-7rem)] max-w-3xl flex-col">
+      {/* Page header */}
+      <div className="mb-3 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint-400/15 text-mint-500">
+          <MessageCircle className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-lg font-extrabold text-ink-900">Ask My Teacher</h1>
+          <p className="text-xs text-ink-500">Chat with your AI mentor</p>
+        </div>
+      </div>
+
       {/* Ask My Teacher panel */}
       <AskMyTeacher onStart={handleTeacherStart} disabled={isAiFree} />
 
       {/* Language selector */}
-      <div className="mt-3 flex items-center gap-2 px-4 py-2 border-b border-ink-100 bg-white rounded-t-lg">
-        <span className="text-xs text-ink-500">Language:</span>
+      <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-t-2xl border-x border-t border-2 border-ink-100 bg-white">
+        <span className="text-xs font-bold uppercase tracking-wider text-ink-500">Language:</span>
         {(["EN", "UR", "ROMAN_UR"] as const).map((lang) => (
           <button
             key={lang}
             onClick={() => setLanguage(lang)}
             disabled={!!conversationId}
             className={
-              "rounded-md px-2.5 py-1 text-xs font-medium transition-colors " +
+              "rounded-xl px-2.5 py-1 text-xs font-semibold transition-colors " +
               (language === lang
                 ? "bg-ink-900 text-white"
                 : "border border-ink-200 text-ink-600 hover:bg-ink-50 disabled:opacity-50")
@@ -84,7 +96,7 @@ export default function AskPage() {
         ))}
       </div>
 
-      <div className="flex-1 min-h-0 flex flex-col border-x border-b border-ink-100 bg-white rounded-b-lg overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col border-x border-b border-2 border-ink-100 bg-white rounded-b-2xl overflow-hidden">
         <ChatView
           ref={chatRef}
           mode={mode}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import { Settings } from "lucide-react";
 
 interface Settings {
   name: string;
@@ -74,14 +75,19 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-ink-900">Settings</h1>
-        <p className="text-sm text-ink-500 mt-0.5">Customize your learning experience.</p>
+      <div className="flex items-start gap-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink-400/15 text-ink-500">
+          <Settings className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">Settings</h1>
+          <p className="text-sm text-ink-500 mt-0.5">Customize your learning experience.</p>
+        </div>
       </div>
 
       {/* Profile */}
-      <div className="card p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-ink-800">Profile</h2>
+      <div className="rounded-2xl border-2 border-ink-100 bg-white p-5 space-y-4">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">Profile</h2>
         <div>
           <label className="text-xs text-ink-500 mb-1 block">Name</label>
           <p className="text-sm text-ink-800 font-medium">{settings.name}</p>
@@ -108,8 +114,8 @@ export default function SettingsPage() {
       </div>
 
       {/* Language */}
-      <div className="card p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-ink-800">Language</h2>
+      <div className="rounded-2xl border-2 border-ink-100 bg-white p-5 space-y-4">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">Language</h2>
         <div className="flex gap-1.5 flex-wrap">
           {LANGUAGES.map((l) => (
             <button
@@ -129,18 +135,18 @@ export default function SettingsPage() {
       </div>
 
       {/* Learning Mode */}
-      <div className="card p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-ink-800">Default Learning Mode</h2>
+      <div className="rounded-2xl border-2 border-ink-100 bg-white p-5 space-y-4">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">Default Learning Mode</h2>
         <div className="space-y-2">
           {MODES.map((m) => (
             <button
               key={m.value}
               onClick={() => setSettings({ ...settings, preferredMode: m.value })}
               className={clsx(
-                "w-full text-left rounded-lg border p-3 transition-colors",
+                "w-full text-left rounded-2xl border-2 p-3 transition-colors",
                 settings.preferredMode === m.value
-                  ? "border-ink-900 bg-ink-900/5"
-                  : "border-ink-200 hover:bg-ink-50",
+                  ? "border-mint-400 bg-mint-50"
+                  : "border-ink-100 hover:border-ink-300",
               )}
             >
               <p className="text-sm font-medium text-ink-800">{m.label}</p>
@@ -151,8 +157,8 @@ export default function SettingsPage() {
       </div>
 
       {/* Voice & Avatar */}
-      <div className="card p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-ink-800">Voice Teacher</h2>
+      <div className="rounded-2xl border-2 border-ink-100 bg-white p-5 space-y-4">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">Voice Teacher</h2>
         <div>
           <label className="text-xs text-ink-500 mb-1.5 block">Avatar</label>
           <div className="flex gap-2">

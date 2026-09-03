@@ -3,12 +3,13 @@
 import { useState } from "react";
 import type { AnalysisResult } from "@/lib/independent-engine";
 import clsx from "clsx";
+import { CheckCircle, XCircle, AlertCircle, Volume2, VolumeX } from "lucide-react";
 
 const TONE = {
-  STRONG: { bg: "bg-mint-500/10", ring: "ring-mint-500/30", label: "Reasoning: Strong", icon: "✓" },
-  ADEQUATE: { bg: "bg-amber-400/10", ring: "ring-amber-500/30", label: "Reasoning: Adequate", icon: "~" },
-  WEAK: { bg: "bg-amber-400/10", ring: "ring-amber-500/30", label: "Reasoning: Weak", icon: "!" },
-  INCORRECT: { bg: "bg-coral-500/10", ring: "ring-coral-500/30", label: "Reasoning: Incorrect", icon: "×" },
+  STRONG: { bg: "bg-mint-500/10", ring: "ring-mint-500/30", label: "Reasoning: Strong", icon: CheckCircle, iconColor: "text-mint-500" },
+  ADEQUATE: { bg: "bg-amber-400/10", ring: "ring-amber-500/30", label: "Reasoning: Adequate", icon: AlertCircle, iconColor: "text-amber-500" },
+  WEAK: { bg: "bg-amber-400/10", ring: "ring-amber-500/30", label: "Reasoning: Weak", icon: AlertCircle, iconColor: "text-amber-500" },
+  INCORRECT: { bg: "bg-coral-500/10", ring: "ring-coral-500/30", label: "Reasoning: Incorrect", icon: XCircle, iconColor: "text-coral-500" },
 } as const;
 
 const MISTAKE_LABEL: Record<string, string> = {
@@ -32,6 +33,7 @@ export function FeedbackPanel({
   attemptNumber: number;
 }) {
   const tone = TONE[analysis.reasoning];
+  const ToneIcon = tone.icon;
   const [speaking, setSpeaking] = useState(false);
 
   const readAloud = () => {
@@ -52,27 +54,40 @@ export function FeedbackPanel({
   return (
     <div
       className={clsx(
-        "rounded-2xl p-5 ring-1",
+        "rounded-2xl border-2 p-5 ring-1",
         tone.bg,
         tone.ring,
-        analysis.isCorrect ? "" : "border-l-4 border-coral-500"
+        analysis.isCorrect ? "border-mint-400/40" : "border-coral-500/40"
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-xs font-medium uppercase tracking-wider text-ink-600">
-            Attempt #{attemptNumber} — Analysis
+        <div className="flex items-start gap-3">
+          <span
+            className={clsx(
+              "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+              analysis.isCorrect
+                ? "bg-mint-400/15 text-mint-500"
+                : "bg-coral-500/15 text-coral-500"
+            )}
+          >
+            {analysis.isCorrect ? (
+              <CheckCircle className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
+          </span>
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider text-ink-600">
+              Attempt #{attemptNumber} — Analysis
+            </div>
+            <h3 className="mt-1 text-lg font-extrabold text-ink-900">
+              {analysis.isCorrect ? "Final answer correct" : "Not quite there"}
+            </h3>
           </div>
-          <h3 className="mt-1 text-lg font-semibold text-ink-900">
-            {analysis.isCorrect ? "Final answer correct" : "Not quite there"}
-            <span className="ml-2 text-base">
-              {analysis.isCorrect ? "✓" : "×"}
-            </span>
-          </h3>
         </div>
         <div className="text-right">
-          <div className="text-xs text-ink-500">Reasoning score</div>
-          <div className="text-lg font-semibold tabular-nums">{analysis.reasoningScore}</div>
+          <div className="text-xs font-medium text-ink-500">Reasoning score</div>
+          <div className="text-lg font-extrabold tabular-nums text-ink-900">{analysis.reasoningScore}</div>
         </div>
       </div>
 
@@ -82,17 +97,13 @@ export function FeedbackPanel({
 
       <button
         onClick={readAloud}
-        className="mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs text-ink-500 transition hover:bg-ink-100 hover:text-ink-700"
+        className="mt-2 inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-medium text-ink-500 transition hover:bg-ink-100 hover:text-ink-700"
         title={speaking ? "Stop reading" : "Read feedback aloud"}
       >
         {speaking ? (
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
-          </svg>
+          <VolumeX className="h-3.5 w-3.5" />
         ) : (
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
-          </svg>
+          <Volume2 className="h-3.5 w-3.5" />
         )}
         {speaking ? "Stop" : "Read aloud"}
       </button>
@@ -100,20 +111,21 @@ export function FeedbackPanel({
       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
         <span
           className={clsx(
-            "rounded-full px-2.5 py-1 font-medium",
+            "inline-flex items-center gap-1 rounded-xl px-2.5 py-1 font-semibold",
             tone.bg,
             "ring-1",
             tone.ring
           )}
         >
-          {tone.icon} {tone.label}
+          <ToneIcon className={clsx("h-3.5 w-3.5", tone.iconColor)} />
+          {tone.label}
         </span>
         {!analysis.isCorrect && analysis.mistakeType !== "NONE" && (
-          <span className="rounded-full bg-coral-500/10 px-2.5 py-1 font-medium text-coral-700 ring-1 ring-coral-500/30">
+          <span className="rounded-xl bg-coral-500/10 px-2.5 py-1 font-semibold text-coral-700 ring-1 ring-coral-500/30">
             {MISTAKE_LABEL[analysis.mistakeType] ?? analysis.mistakeType}
           </span>
         )}
-        <span className="rounded-full bg-ink-100 px-2.5 py-1 font-medium text-ink-700">
+        <span className="rounded-xl bg-ink-100 px-2.5 py-1 font-semibold text-ink-700">
           Next: {analysis.nextAction}
         </span>
       </div>

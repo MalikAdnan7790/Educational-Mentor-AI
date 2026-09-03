@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { GraduationCap, X, Menu } from "lucide-react";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -54,16 +55,19 @@ export function Navbar({ studentName }: { studentName: string }) {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink-100 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold text-ink-900">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint-500/15 text-base">🎓</span>
-          <span className="hidden sm:inline">Educational Mentor AI</span>
-          <span className="sm:hidden">EMAI</span>
+    <header className="sticky top-0 z-40 border-b-2 border-ink-100 bg-white">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-mint-400 text-white shadow-[0_3px_0_0_#368a00]">
+            <GraduationCap className="h-5 w-5" />
+          </span>
+          <span className="hidden text-lg font-extrabold text-ink-900 sm:inline">
+            EMAI
+          </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden flex-1 items-center gap-1 lg:flex" aria-label="Main navigation">
+        <nav className="hidden flex-1 items-center gap-1 overflow-x-auto lg:flex" aria-label="Main navigation">
           {LINKS.map((link) => {
             const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
@@ -72,8 +76,10 @@ export function Navbar({ studentName }: { studentName: string }) {
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={
-                  "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors " +
-                  (active ? "bg-ink-100 text-ink-900" : "text-ink-500 hover:bg-ink-50 hover:text-ink-800")
+                  "whitespace-nowrap rounded-xl px-3 py-2 text-sm font-semibold transition-colors " +
+                  (active
+                    ? "bg-mint-400/10 text-mint-500"
+                    : "text-ink-400 hover:bg-ink-50 hover:text-ink-700")
                 }
               >
                 {link.label}
@@ -89,36 +95,35 @@ export function Navbar({ studentName }: { studentName: string }) {
         <button
           type="button"
           onClick={() => setMobileOpen((v) => !v)}
-          className="lg:hidden flex items-center justify-center h-9 w-9 rounded-lg text-ink-600 hover:bg-ink-50 transition-colors"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-ink-500 hover:bg-ink-50 transition-colors lg:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
         >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            {mobileOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
         <div className="flex shrink-0 items-center gap-3">
-          <span className="hidden items-center gap-2 text-sm text-ink-600 md:flex">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-white">
+          <span className="hidden items-center gap-2.5 text-sm font-semibold text-ink-600 md:flex">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-mint-400 text-sm font-bold text-white">
               {initials || "S"}
             </span>
             {studentName}
           </span>
-          <button onClick={logout} disabled={loggingOut} aria-label="Sign out" className="btn-ghost px-3 py-1.5 text-xs">
-            {loggingOut ? "…" : "Sign out"}
+          <button
+            onClick={logout}
+            disabled={loggingOut}
+            aria-label="Sign out"
+            className="btn-ghost px-3 py-1.5 text-xs"
+          >
+            {loggingOut ? "..." : "Sign out"}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu dropdown */}
+      {/* Mobile menu drawer */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-ink-100 bg-white fade-in">
-          <nav className="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-0.5" aria-label="Mobile navigation">
+        <div className="border-t-2 border-ink-100 bg-white fade-in lg:hidden">
+          <nav className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-1" aria-label="Mobile navigation">
             {LINKS.map((link) => {
               const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
               return (
@@ -127,8 +132,10 @@ export function Navbar({ studentName }: { studentName: string }) {
                   href={link.href}
                   aria-current={active ? "page" : undefined}
                   className={
-                    "rounded-lg px-3 py-2.5 text-sm font-medium transition-colors " +
-                    (active ? "bg-ink-100 text-ink-900" : "text-ink-500 hover:bg-ink-50 hover:text-ink-800")
+                    "rounded-xl px-4 py-3 text-sm font-semibold transition-colors " +
+                    (active
+                      ? "bg-mint-400/10 text-mint-500"
+                      : "text-ink-500 hover:bg-ink-50 hover:text-ink-800")
                   }
                 >
                   {link.label}

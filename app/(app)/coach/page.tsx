@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Users } from "lucide-react";
 
 interface CoachReport {
   didWell: string[];
@@ -47,12 +48,17 @@ export default function CoachPage() {
 
   return (
     <div className="space-y-6">
-      <section>
-        <h1 className="text-2xl font-bold text-ink-900">AI Learning Coach</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          A report built only from your real data — sessions, attempts, hints, mistakes, and
-          confidence checks. No invented statistics, ever.
-        </p>
+      <section className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/15 text-sky-500">
+          <Users className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">AI Learning Coach</h1>
+          <p className="mt-0.5 text-sm text-ink-500">
+            A report built only from your real data — sessions, attempts, hints, mistakes, and
+            confidence checks. No invented statistics, ever.
+          </p>
+        </div>
       </section>
 
       {!report && (
@@ -76,7 +82,7 @@ export default function CoachPage() {
         <>
           <section className="card max-w-2xl p-6">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium uppercase tracking-wider text-ink-500">
+              <span className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 What went well
               </span>
               <span className="chip ml-auto bg-mint-500/15 text-mint-700">Keep it up</span>
@@ -93,7 +99,7 @@ export default function CoachPage() {
           </section>
 
           <section className="card max-w-2xl p-6">
-            <span className="text-xs font-medium uppercase tracking-wider text-ink-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-ink-500">
               What struggled
             </span>
             {report.struggledWith.length > 0 ? (
@@ -109,13 +115,13 @@ export default function CoachPage() {
 
           <section className="grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="card p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Common mistake
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-800">{report.commonMistake}</p>
             </div>
             <div className="card p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Revise this concept
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-800">
@@ -123,7 +129,7 @@ export default function CoachPage() {
               </p>
             </div>
             <div className="card p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Recommended practice
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-800">
@@ -131,7 +137,7 @@ export default function CoachPage() {
               </p>
             </div>
             <div className="card p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Next topic
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-800">{report.nextTopic}</p>
@@ -143,7 +149,7 @@ export default function CoachPage() {
 
           {report.confidenceNote && (
             <section className="card max-w-2xl border-l-4 border-mint-400 p-6">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Confidence check
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-700">{report.confidenceNote}</p>

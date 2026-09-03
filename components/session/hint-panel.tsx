@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { Lightbulb } from "lucide-react";
 
 interface Hint {
   level: number;
@@ -29,10 +30,15 @@ export function HintPanel({
   };
 
   return (
-    <div className="card p-5">
+    <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
       <div className="flex items-center justify-between">
-        <div className="text-xs font-medium uppercase tracking-wider text-ink-500">
-          Progressive Hints ({hints.length}/6)
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/15 text-amber-500">
+            <Lightbulb className="h-5 w-5" />
+          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-ink-500">
+            Progressive Hints ({hints.length}/6)
+          </span>
         </div>
         <button onClick={onRequest} disabled={loading || locked} className="btn-amber">
           {loading ? "Loading…" : locked ? "Locked" : "Ask for a hint"}
@@ -40,13 +46,13 @@ export function HintPanel({
       </div>
 
       {locked && lockReason && (
-        <p className="mt-2 rounded-lg bg-amber-400/10 px-3 py-2 text-xs text-amber-700">
+        <p className="mt-3 rounded-xl border-2 border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-700">
           {lockReason}
         </p>
       )}
 
       {hints.length === 0 ? (
-        <p className="mt-3 text-sm text-ink-500">
+        <p className="mt-3 text-sm font-medium text-ink-500">
           No hints requested yet. Try to solve the problem on your own first.
         </p>
       ) : (
@@ -55,16 +61,16 @@ export function HintPanel({
             <li
               key={i}
               className={clsx(
-                "rounded-xl border border-ink-100 bg-ink-50/50 p-3 text-sm",
+                "rounded-xl border-2 border-ink-100 bg-ink-50/50 p-3 text-sm",
                 "transition",
                 i === hints.length - 1 && "border-amber-400/40 bg-amber-400/5"
               )}
             >
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-ink-700">
+                <span className="font-bold text-ink-700">
                   Level {h.level}
                 </span>
-                <span className="text-ink-500">
+                <span className="font-medium text-ink-500">
                   {KIND_LABEL[h.kind] ?? h.kind}
                 </span>
               </div>

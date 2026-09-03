@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import clsx from "clsx";
+import { BookOpen, Star, ThumbsUp, BookOpenCheck } from "lucide-react";
 
 interface Section {
   title: string;
@@ -156,18 +157,23 @@ export default function LessonsPage() {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        <div>
-          <h1 className="text-xl font-semibold text-ink-900">Mini Lessons</h1>
-          <p className="text-sm text-ink-500 mt-1">Interactive lessons that teach you step by step, with check questions along the way.</p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint-400/15 text-mint-500">
+            <BookOpen className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-ink-900">Mini Lessons</h1>
+            <p className="text-sm text-ink-500 mt-0.5">Interactive lessons that teach you step by step, with check questions along the way.</p>
+          </div>
         </div>
 
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+          <div className="rounded-xl bg-red-50 border-2 border-red-200 px-3 py-2 text-sm text-red-700">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleGenerate} className="rounded-xl border border-ink-200 bg-white p-4 space-y-3">
+        <form onSubmit={handleGenerate} className="rounded-2xl border-2 border-ink-100 bg-white p-4 space-y-3">
           <h2 className="text-sm font-medium text-ink-700">Start a new lesson</h2>
           <input
             type="text"
@@ -200,8 +206,10 @@ export default function LessonsPage() {
         </form>
 
         {lessons.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-ink-200 py-12 text-center">
-            <div className="text-3xl mb-2">📚</div>
+          <div className="rounded-2xl border-2 border-dashed border-ink-200 py-12 text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-mint-400/15 text-mint-500">
+              <BookOpen className="h-6 w-6" />
+            </div>
             <p className="text-sm text-ink-500">No lessons yet. Generate one above to get started.</p>
           </div>
         ) : (
@@ -214,7 +222,7 @@ export default function LessonsPage() {
                 <button
                   key={lesson.id}
                   onClick={() => openLesson(lesson)}
-                  className="w-full text-left rounded-xl border border-ink-200 bg-white p-4 hover:border-ink-300 hover:shadow-sm transition-all"
+                  className="w-full text-left rounded-xl border-2 border-ink-200 bg-white p-4 hover:border-ink-300 hover:shadow-sm transition-all"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -225,20 +233,20 @@ export default function LessonsPage() {
                     </div>
                     <div className="shrink-0">
                       {lesson.status === "COMPLETED" ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                        <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
                           {lesson.scorePct}%
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                        <span className="inline-flex items-center gap-1 rounded-xl bg-mint-50 px-2.5 py-0.5 text-xs font-medium text-mint-600">
                           {lesson.currentStep}/{total}
                         </span>
                       )}
                     </div>
                   </div>
                   {lesson.status !== "COMPLETED" && (
-                    <div className="mt-2 h-1.5 rounded-full bg-ink-100 overflow-hidden">
+                    <div className="mt-2 h-1.5 rounded-xl bg-ink-100 overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-blue-500 transition-all"
+                        className="h-full rounded-xl bg-mint-500 transition-all"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -293,7 +301,7 @@ function LearnView({
         </button>
 
         <div>
-          <h1 className="text-lg font-semibold text-ink-900">{lesson.topic}</h1>
+          <h1 className="text-lg font-bold text-ink-900">{lesson.topic}</h1>
           <p className="text-xs text-ink-500 mt-0.5">Section {currentStep + 1} of {total}</p>
         </div>
 
@@ -302,23 +310,23 @@ function LearnView({
             <div
               key={i}
               className={clsx(
-                "h-1.5 flex-1 rounded-full transition-colors",
-                i < currentStep ? "bg-emerald-400" : i === currentStep ? "bg-blue-500" : "bg-ink-100",
+                "h-1.5 flex-1 rounded-xl transition-colors",
+                i < currentStep ? "bg-emerald-400" : i === currentStep ? "bg-mint-500" : "bg-ink-100",
               )}
             />
           ))}
         </div>
 
-        <div className="rounded-xl border border-ink-200 bg-white p-5 space-y-4">
-          <h2 className="font-medium text-ink-900">{section.title}</h2>
+        <div className="rounded-xl border-2 border-ink-200 bg-white p-5 space-y-4">
+          <h2 className="font-bold text-ink-900">{section.title}</h2>
           <div className="text-sm text-ink-700 leading-relaxed whitespace-pre-line">
             {section.content}
           </div>
         </div>
 
-        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-5 space-y-3">
-          <h3 className="text-sm font-medium text-blue-900">Check your understanding</h3>
-          <p className="text-sm text-blue-800">{section.checkQuestion}</p>
+        <div className="rounded-xl border-2 border-mint-400/40 bg-mint-50/50 p-5 space-y-3">
+          <h3 className="text-sm font-bold text-mint-800">Check your understanding</h3>
+          <p className="text-sm text-mint-700">{section.checkQuestion}</p>
 
           <form onSubmit={onSubmit} className="space-y-3">
             <input
@@ -341,7 +349,7 @@ function LearnView({
 
           {feedback && (
             <div className={clsx(
-              "rounded-lg px-3 py-2 text-sm",
+              "rounded-xl px-3 py-2 text-sm",
               feedback.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-800",
             )}>
               {feedback.correct ? (
@@ -372,7 +380,8 @@ function CompleteView({
   onBack: () => void;
   onRetry: () => void;
 }) {
-  const emoji = score >= 80 ? "🌟" : score >= 50 ? "👍" : "📖";
+  const scoreIcon = score >= 80 ? <Star className="h-10 w-10" /> : score >= 50 ? <ThumbsUp className="h-10 w-10" /> : <BookOpenCheck className="h-10 w-10" />;
+  const iconBg = score >= 80 ? "bg-amber-400/15 text-amber-500" : score >= 50 ? "bg-sky-400/15 text-sky-500" : "bg-mint-400/15 text-mint-500";
   const message = score >= 80
     ? "Excellent work! You've got a strong grasp of this topic."
     : score >= 50
@@ -382,11 +391,13 @@ function CompleteView({
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="max-w-md mx-auto px-4 py-12 text-center space-y-5">
-        <div className="text-5xl">{emoji}</div>
-        <h1 className="text-xl font-semibold text-ink-900">Lesson Complete!</h1>
+        <div className={`mx-auto flex h-16 w-16 items-center justify-center rounded-2xl ${iconBg}`}>
+          {scoreIcon}
+        </div>
+        <h1 className="text-xl font-extrabold text-ink-900">Lesson Complete!</h1>
         <p className="text-sm text-ink-600">{lesson.topic}</p>
 
-        <div className="rounded-xl border border-ink-200 bg-white p-6">
+        <div className="rounded-2xl border-2 border-ink-100 bg-white p-6">
           <div className="text-4xl font-bold text-ink-900">{score}%</div>
           <p className="text-xs text-ink-500 mt-1">Your score</p>
           <p className="text-sm text-ink-600 mt-3">{message}</p>
@@ -395,7 +406,7 @@ function CompleteView({
         <div className="flex gap-3">
           <button
             onClick={onBack}
-            className="flex-1 rounded-lg border border-ink-200 px-4 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50 transition-colors"
+            className="flex-1 rounded-xl border-2 border-ink-200 px-4 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50 transition-colors"
           >
             All Lessons
           </button>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import { Brain } from "lucide-react";
 
 interface Subject {
   key: string;
@@ -120,17 +121,22 @@ export default function TeachPage() {
 
   return (
     <div className="space-y-6">
-      <section>
-        <h1 className="text-2xl font-bold text-ink-900">Teach Me</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          The best test of understanding is teaching. You become the teacher — the AI becomes
-          your student — and gets evaluated on accuracy, clarity, and examples.
-        </p>
+      <section className="flex items-start gap-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-400/15 text-purple-500">
+          <Brain className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">Teach Me</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            The best test of understanding is teaching. You become the teacher — the AI becomes
+            your student — and gets evaluated on accuracy, clarity, and examples.
+          </p>
+        </div>
       </section>
 
       {view === "setup" && (
-        <section className="card max-w-xl p-6">
-          <h2 className="text-sm font-semibold text-ink-900">Pick a topic to teach</h2>
+        <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-xl p-6">
+          <h2 className="text-sm font-bold text-ink-900">Pick a topic to teach</h2>
           <div className="mt-4 space-y-4">
             <div>
               <label className="text-xs font-medium text-ink-600">Subject (optional)</label>
@@ -166,13 +172,13 @@ export default function TeachPage() {
       )}
 
       {view === "teach" && prompt && (
-        <section className="card max-w-2xl p-6">
+        <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6">
           <div className="flex items-center gap-2 text-xs text-ink-400">
-            <span className="chip bg-mint-500/15 text-mint-700">Your student asks</span>
+            <span className="chip bg-purple-500/15 text-purple-700">Your student asks</span>
             <span>{topic}</span>
           </div>
           <p className="mt-3 text-lg font-medium leading-relaxed text-ink-900">{prompt}</p>
-          <div className="mt-4 rounded-xl border border-ink-100 bg-ink-50/50 p-3 text-xs text-ink-500">
+          <div className="mt-4 rounded-2xl border-2 border-ink-100 bg-ink-50/50 p-3 text-xs text-ink-500">
             Teach in your own words. Use an example or an analogy if you can — good examples are
             part of the grade.
           </div>
@@ -201,14 +207,14 @@ export default function TeachPage() {
       )}
 
       {view === "result" && evaluation && (
-        <section className="card max-w-2xl p-6">
+        <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-xs font-medium uppercase tracking-wider text-ink-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-ink-500">
               {topic} — teacher evaluation
             </span>
             <span
               className={clsx(
-                "ml-auto rounded-full px-2.5 py-1 text-xs font-semibold",
+                "ml-auto rounded-xl px-2.5 py-1 text-xs font-semibold",
                 evaluation.understandingScore >= 70
                   ? "bg-mint-500/15 text-mint-700"
                   : evaluation.understandingScore >= 40
@@ -233,8 +239,8 @@ export default function TeachPage() {
           {(evaluation.missingConcepts.length > 0 || evaluation.misconceptions.length > 0) && (
             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {evaluation.missingConcepts.length > 0 && (
-                <div className="rounded-xl border border-amber-400/40 bg-amber-400/10 p-4">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-amber-700">
+                <div className="rounded-2xl border-2 border-amber-400/40 bg-amber-400/10 p-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-amber-700">
                     Missing concepts
                   </h3>
                   <ul className="mt-2 space-y-1 text-sm text-ink-700">
@@ -245,8 +251,8 @@ export default function TeachPage() {
                 </div>
               )}
               {evaluation.misconceptions.length > 0 && (
-                <div className="rounded-xl border border-coral-400/40 bg-coral-500/5 p-4">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-coral-600">
+                <div className="rounded-2xl border-2 border-coral-400/40 bg-coral-500/5 p-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-coral-600">
                     Misconceptions to fix
                   </h3>
                   <ul className="mt-2 space-y-1 text-sm text-ink-700">

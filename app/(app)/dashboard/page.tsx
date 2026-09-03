@@ -147,31 +147,31 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
-          <div className="skeleton h-7 w-40" />
+          <div className="skeleton h-8 w-48" />
           <div className="skeleton mt-2 h-4 w-64" />
         </div>
-        <div className="skeleton h-28 w-full" />
-        <div className="skeleton h-20 w-full" />
+        <div className="skeleton h-28 w-full rounded-2xl" />
+        <div className="skeleton h-20 w-full rounded-2xl" />
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="skeleton h-48 w-full" />
-          <div className="skeleton h-48 w-full" />
+          <div className="skeleton h-48 w-full rounded-2xl" />
+          <div className="skeleton h-48 w-full rounded-2xl" />
         </div>
-        <div className="skeleton h-32 w-full" />
+        <div className="skeleton h-32 w-full rounded-2xl" />
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="skeleton h-40 w-full" />
-          <div className="skeleton h-40 w-full" />
+          <div className="skeleton h-40 w-full rounded-2xl" />
+          <div className="skeleton h-40 w-full rounded-2xl" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-semibold text-ink-900">My Learning</h1>
-        <p className="text-sm text-ink-500 mt-0.5">Track your progress and find what to work on next.</p>
+        <h1 className="text-2xl font-extrabold text-ink-900">My Learning</h1>
+        <p className="text-sm text-ink-500 mt-1">Track your progress and find what to work on next.</p>
       </div>
 
       {/* Next Best Action */}
@@ -193,7 +193,7 @@ export default function DashboardPage() {
       {/* Independence + AI Dependency */}
       <div className="grid gap-6 md:grid-cols-2">
         {metrics && (
-          <div className="card flex flex-col items-center gap-6 p-6 sm:flex-row sm:items-start">
+          <div className="flex flex-col items-center gap-6 rounded-2xl border-2 border-ink-100 bg-white p-6 sm:flex-row sm:items-start">
             <ScoreRing
               value={metrics.independentSuccessRate}
               size={140}
@@ -206,25 +206,25 @@ export default function DashboardPage() {
                   {
                     label: "AI-Free Success",
                     value: `${Math.round(metrics.aiFreeSuccessRate * 100)}%`,
-                    icon: "🛡️",
+                    icon: "Shield",
                     tone: metrics.aiFreeSuccessRate >= 0.5 ? "mint" : "amber",
                   },
                   {
                     label: "Avg Hints",
                     value: metrics.hintDependency.toFixed(1),
-                    icon: "💡",
+                    icon: "Lightbulb",
                     tone: metrics.hintDependency <= 2 ? "mint" : "amber",
                   },
                   {
                     label: "First-Attempt",
                     value: `${Math.round(metrics.firstAttemptAccuracy * 100)}%`,
-                    icon: "🎯",
+                    icon: "Target",
                     tone: metrics.firstAttemptAccuracy >= 0.5 ? "mint" : "amber",
                   },
                   {
                     label: "Retry Success",
                     value: `${Math.round(metrics.retrySuccessRate * 100)}%`,
-                    icon: "🔄",
+                    icon: "RefreshCw",
                     tone: metrics.retrySuccessRate >= 0.6 ? "mint" : "amber",
                   },
                 ]}

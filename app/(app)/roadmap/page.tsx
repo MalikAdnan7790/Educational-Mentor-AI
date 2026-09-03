@@ -3,6 +3,16 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
+import {
+  Map,
+  BookOpen,
+  Pencil,
+  HelpCircle,
+  RotateCcw,
+  Dumbbell,
+  Video,
+  ClipboardList,
+} from "lucide-react";
 
 interface RoadmapTask {
   title: string;
@@ -41,13 +51,22 @@ const ACTIVITY_COLORS: Record<string, string> = {
   VIDEO: "bg-pink-100 text-pink-700",
 };
 
-const ACTIVITY_ICONS: Record<string, string> = {
-  READ: "📖",
-  PRACTICE: "✏️",
-  QUIZ: "❓",
-  REVIEW: "🔄",
-  EXERCISE: "💪",
-  VIDEO: "🎬",
+const ACTIVITY_ICON_COLORS: Record<string, string> = {
+  READ: "bg-sky-400/15 text-sky-500",
+  PRACTICE: "bg-mint-400/15 text-mint-500",
+  QUIZ: "bg-purple-400/15 text-purple-500",
+  REVIEW: "bg-amber-400/15 text-amber-500",
+  EXERCISE: "bg-coral-400/15 text-coral-500",
+  VIDEO: "bg-pink-400/15 text-pink-500",
+};
+
+const ACTIVITY_ICON_COMPONENTS: Record<string, React.ElementType> = {
+  READ: BookOpen,
+  PRACTICE: Pencil,
+  QUIZ: HelpCircle,
+  REVIEW: RotateCcw,
+  EXERCISE: Dumbbell,
+  VIDEO: Video,
 };
 
 export default function RoadmapPage() {
@@ -114,16 +133,21 @@ export default function RoadmapPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ink-900">Study Roadmap</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          AI-generated week-by-week study plans based on your strengths and weaknesses.
-        </p>
+      <div className="flex items-start gap-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-400/15 text-purple-500">
+          <Map className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">Study Roadmap</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            AI-generated week-by-week study plans based on your strengths and weaknesses.
+          </p>
+        </div>
       </div>
 
       {/* Generator form */}
-      <section className="card p-5">
-        <h2 className="text-sm font-semibold text-ink-900">Generate new roadmap</h2>
+      <section className="rounded-2xl border-2 border-ink-100 bg-white p-5">
+        <h2 className="text-sm font-bold text-ink-900">Generate new roadmap</h2>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-4">
           <select
             className="input"
@@ -167,16 +191,16 @@ export default function RoadmapPage() {
 
       {/* Roadmap list */}
       {roadmaps.length === 0 ? (
-        <div className="card p-10 text-center text-sm text-ink-500">
+        <div className="rounded-2xl border-2 border-ink-100 bg-white p-10 text-center text-sm text-ink-500">
           No roadmaps yet. Generate one above to get started.
         </div>
       ) : (
         <div className="space-y-6">
           {roadmaps.map((rm) => (
-            <section key={rm.id} className="card p-5">
+            <section key={rm.id} className="rounded-2xl border-2 border-ink-100 bg-white p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-lg font-semibold text-ink-900">{rm.title}</h2>
+                  <h2 className="text-lg font-bold text-ink-900">{rm.title}</h2>
                   <p className="text-xs text-ink-500">
                     {rm.subjectKey ?? "All subjects"} · {rm.roadmap.weeks.length} weeks ·{" "}
                     {new Date(rm.createdAt).toLocaleDateString()}
@@ -192,21 +216,26 @@ export default function RoadmapPage() {
                     {/* Week dot */}
                     <div className="absolute left-0.5 top-1 h-4 w-4 rounded-full border-2 border-blue-500 bg-white" />
 
-                    <div className="rounded-xl border border-ink-100 p-4">
+                    <div className="rounded-2xl border-2 border-ink-100 bg-white p-4">
                       <div className="flex items-center gap-2">
-                        <span className="rounded-md bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                        <span className="rounded-md bg-purple-400/15 px-2 py-0.5 text-xs font-bold text-purple-600">
                           Week {w.week}
                         </span>
                         <span className="text-sm font-medium text-ink-800">{w.theme}</span>
                       </div>
 
                       <div className="mt-3 space-y-2">
-                        {w.tasks.map((t, i) => (
-                          <div
-                            key={i}
-                            className="flex items-start gap-3 rounded-lg bg-ink-50/50 p-3"
-                          >
-                            <span className="text-lg">{ACTIVITY_ICONS[t.activityType] ?? "📋"}</span>
+                        {w.tasks.map((t, i) => {
+                          const IconComp = ACTIVITY_ICON_COMPONENTS[t.activityType] ?? ClipboardList;
+                          const iconColor = ACTIVITY_ICON_COLORS[t.activityType] ?? "bg-ink-100 text-ink-500";
+                          return (
+                            <div
+                              key={i}
+                              className="flex items-start gap-3 rounded-xl bg-ink-50/50 p-3"
+                            >
+                              <div className={clsx("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", iconColor)}>
+                                <IconComp className="h-4 w-4" />
+                              </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className="text-sm font-medium text-ink-900">{t.title}</span>
@@ -224,7 +253,8 @@ export default function RoadmapPage() {
                               <p className="mt-0.5 text-[10px] text-ink-400">Topic: {t.topic}</p>
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

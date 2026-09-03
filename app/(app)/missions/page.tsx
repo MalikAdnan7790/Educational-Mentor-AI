@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import { Target } from "lucide-react";
 
 interface MissionListItem {
   id: string;
@@ -350,12 +351,17 @@ export default function MissionsPage() {
 
   return (
     <div className="space-y-6">
-      <section>
-        <h1 className="text-2xl font-bold text-ink-900">Mistake → Mission</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          When a mistake repeats, it becomes a repair mission: a mini lesson, guided practice, a
-          challenge, and a final re-test. Pass the re-test and the mistake is resolved.
-        </p>
+      <section className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-coral-400/15 text-coral-500">
+          <Target className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">Mistake → Mission</h1>
+          <p className="mt-0.5 text-sm text-ink-500">
+            When a mistake repeats, it becomes a repair mission: a mini lesson, guided practice, a
+            challenge, and a final re-test. Pass the re-test and the mistake is resolved.
+          </p>
+        </div>
       </section>
 
       {activeMission && (
@@ -413,7 +419,7 @@ export default function MissionsPage() {
       </section>
 
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-400">Mission history</h2>
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">Mission history</h2>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {missions.length === 0 && (
             <div className="col-span-full rounded-2xl border border-dashed border-ink-200 p-6 text-center text-sm text-ink-500">

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import clsx from "clsx";
+import { FileCheck } from "lucide-react";
 
 interface ExamQuestionView {
   id: string;
@@ -146,12 +147,17 @@ export default function ExamDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-900">{exam.title}</h1>
-          <p className="mt-1 text-sm text-ink-500">
-            {exam.questionCount} questions · {exam.difficulty}
-            {exam.sourceNoteId ? " · from your notes" : ""}
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint-400/15 text-mint-500">
+            <FileCheck className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-ink-900">{exam.title}</h1>
+            <p className="mt-0.5 text-sm text-ink-500">
+              {exam.questionCount} questions · {exam.difficulty}
+              {exam.sourceNoteId ? " · from your notes" : ""}
+            </p>
+          </div>
         </div>
         {!graded && timerLabel && (
           <span
@@ -201,8 +207,8 @@ export default function ExamDetailPage() {
             return (
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {s.weakTopics.length > 0 && (
-                  <div className="rounded-xl border border-coral-400/40 bg-coral-500/5 p-4">
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-coral-600">Weak topics</h3>
+                  <div className="rounded-xl border-2 border-coral-400/40 bg-coral-500/5 p-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-coral-600">Weak topics</h3>
                     <ul className="mt-2 space-y-1 text-sm text-ink-700">
                       {s.weakTopics.map((t, i) => (
                         <li key={i}>• {t}</li>
@@ -211,8 +217,8 @@ export default function ExamDetailPage() {
                   </div>
                 )}
                 {s.revision.length > 0 && (
-                  <div className="rounded-xl border border-ink-100 p-4">
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-500">Revision plan</h3>
+                  <div className="rounded-xl border-2 border-ink-100 p-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">Revision plan</h3>
                     <ul className="mt-2 space-y-1 text-sm text-ink-700">
                       {s.revision.map((t, i) => (
                         <li key={i}>• {t}</li>
@@ -221,8 +227,8 @@ export default function ExamDetailPage() {
                   </div>
                 )}
                 {s.mistakeAnalysis.length > 0 && (
-                  <div className="rounded-xl border border-amber-400/40 bg-amber-400/5 p-4">
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-amber-700">Mistakes</h3>
+                  <div className="rounded-xl border-2 border-amber-400/40 bg-amber-400/5 p-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-700">Mistakes</h3>
                     <ul className="mt-2 space-y-1 text-sm text-ink-700">
                       {s.mistakeAnalysis.map((t, i) => (
                         <li key={i}>• {t}</li>

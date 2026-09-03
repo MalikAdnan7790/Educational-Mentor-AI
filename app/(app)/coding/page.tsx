@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { Code } from "lucide-react";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -95,11 +96,16 @@ export default function CodingPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-900">Coding Mentor</h1>
-          <p className="mt-1 text-sm text-ink-500">
-            Get guided help with your code — we won&apos;t just give you the answer.
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/15 text-sky-500">
+            <Code className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-ink-900">Coding Mentor</h1>
+            <p className="text-sm text-ink-500">
+              Get guided help with your code — we won&apos;t just give you the answer.
+            </p>
+          </div>
         </div>
         <select
           className="input w-auto"
@@ -116,9 +122,9 @@ export default function CodingPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Code editor */}
-        <div className="card overflow-hidden">
-          <div className="flex items-center justify-between border-b border-ink-100 px-4 py-2">
-            <span className="text-xs font-semibold text-ink-500">Your Code</span>
+        <div className="rounded-2xl border-2 border-ink-100 bg-white overflow-hidden">
+          <div className="flex items-center justify-between border-b-2 border-ink-100 px-4 py-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-ink-500">Your Code</span>
             <button
               onClick={() => setCode("")}
               className="text-xs text-ink-400 hover:text-ink-600"
@@ -136,9 +142,9 @@ export default function CodingPage() {
         </div>
 
         {/* Chat panel */}
-        <div className="card flex flex-col">
-          <div className="border-b border-ink-100 px-4 py-2">
-            <span className="text-xs font-semibold text-ink-500">Mentor Chat</span>
+        <div className="rounded-2xl border-2 border-ink-100 bg-white flex flex-col">
+          <div className="border-b-2 border-ink-100 px-4 py-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-ink-500">Mentor Chat</span>
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto p-4" style={{ minHeight: 300, maxHeight: 500 }}>
@@ -155,7 +161,7 @@ export default function CodingPage() {
                   "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
                   msg.role === "user"
                     ? "ml-auto bg-ink-900 text-white rounded-br-md"
-                    : "bg-white border border-ink-100 text-ink-800 rounded-bl-md",
+                    : "bg-white border-2 border-ink-100 text-ink-800 rounded-bl-md",
                 )}
               >
                 <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>
@@ -163,7 +169,7 @@ export default function CodingPage() {
             ))}
 
             {streaming && streamText && (
-              <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-ink-100 bg-white px-4 py-2.5 text-sm leading-relaxed text-ink-800">
+              <div className="max-w-[85%] rounded-2xl rounded-bl-md border-2 border-ink-100 bg-white px-4 py-2.5 text-sm leading-relaxed text-ink-800">
                 <pre className="whitespace-pre-wrap font-sans">
                   {streamText}
                   <span className="inline-block w-1.5 h-4 ml-0.5 bg-current opacity-60 animate-pulse align-text-bottom" />
@@ -174,7 +180,7 @@ export default function CodingPage() {
             <div ref={chatEndRef} />
           </div>
 
-          <div className="border-t border-ink-100 p-3">
+          <div className="border-t-2 border-ink-100 p-3">
             <div className="flex gap-2">
               <input
                 className="input flex-1"

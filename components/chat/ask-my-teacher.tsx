@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GraduationCap, ChevronDown, ChevronUp, X, AlertTriangle, Lightbulb } from "lucide-react";
 import { ImageUpload } from "./image-upload";
 import { TEACHER_ACTIONS, DEFAULT_ACTION, type TeacherActionId } from "@/lib/teacher-actions";
 
@@ -69,7 +70,7 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
     const lines = [
       "[I uploaded a question for you to help me with]",
       `Question: ${analysis.questionDetected}`,
-      `Subject: ${analysis.subject} · Topic: ${analysis.topic} · Difficulty: ${analysis.difficulty}`,
+      `Subject: ${analysis.subject} \u00b7 Topic: ${analysis.topic} \u00b7 Difficulty: ${analysis.difficulty}`,
     ];
     if (analysis.studentAttempt) lines.push(`My attempt: ${analysis.studentAttempt}`);
     if (analysis.stuckAt) lines.push(`Where I'm stuck: ${analysis.stuckAt}`);
@@ -92,22 +93,26 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
   }
 
   return (
-    <div className="card p-4 sm:p-5">
+    <div className="rounded-2xl border-2 border-ink-100 bg-white p-4 sm:p-5 shadow-sm">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between gap-3 text-left"
       >
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🎓</span>
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/15 text-sky-500">
+            <GraduationCap className="h-5 w-5 text-sky-600" />
+          </span>
           <div>
-            <h2 className="text-sm font-semibold text-ink-800">Ask My Teacher</h2>
+            <h2 className="text-sm font-extrabold text-ink-900">Ask My Teacher</h2>
             <p className="text-xs text-ink-500">
-              Upload your homework, a math problem, or your attempted solution — the teacher will read it first.
+              Upload your homework, a math problem, or your attempted solution \u2014 the teacher will read it first.
             </p>
           </div>
         </div>
-        <span className="text-ink-400 text-xs">{open ? "▲" : "▼"}</span>
+        <span className="text-ink-400">
+          {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </span>
       </button>
 
       {open && (
@@ -119,14 +124,14 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
                 <img
                   src={imageBase64}
                   alt="Your question"
-                  className="h-16 w-16 rounded-lg object-cover border border-ink-200"
+                  className="h-16 w-16 rounded-xl object-cover border-2 border-ink-200"
                 />
                 <button
                   type="button"
                   onClick={() => setImageBase64(null)}
-                  className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-ink-900 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-coral-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  ×
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             )}
@@ -136,17 +141,17 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
           <textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Or type your question here (optional if you uploaded an image)…"
+            placeholder="Or type your question here (optional if you uploaded an image)..."
             rows={2}
             disabled={disabled || loading}
-            className="input resize-none text-sm"
+            className="w-full resize-none rounded-xl border-2 border-ink-200 px-4 py-3 text-sm text-ink-800 placeholder:text-ink-400 focus:border-sky-500 focus:outline-none"
           />
           <input
             value={stuckOn}
             onChange={(e) => setStuckOn(e.target.value)}
             placeholder="What are you stuck on? (optional)"
             disabled={disabled || loading}
-            className="input text-sm"
+            className="w-full rounded-xl border-2 border-ink-200 px-4 py-3 text-sm text-ink-800 placeholder:text-ink-400 focus:border-sky-500 focus:outline-none"
           />
 
           <div className="flex items-center gap-3">
@@ -154,16 +159,16 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
               type="button"
               onClick={handleAnalyze}
               disabled={!canAnalyze}
-              className="btn-primary px-4 py-2 text-sm"
+              className="btn-primary px-4 py-2 text-sm rounded-xl"
             >
-              {loading ? "Reading your question…" : "Analyze my question"}
+              {loading ? "Reading your question..." : "Analyze my question"}
             </button>
             {(imageBase64 || question || analysis) && (
               <button
                 type="button"
                 onClick={reset}
                 disabled={loading}
-                className="text-xs text-ink-400 hover:text-ink-600 underline"
+                className="text-xs font-medium text-ink-400 hover:text-ink-600 underline"
               >
                 Clear
               </button>
@@ -174,45 +179,48 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
 
           {/* Analysis card */}
           {analysis && (
-            <div className="fade-in rounded-xl border border-ink-200 bg-ink-50/60 p-4 space-y-2.5">
+            <div className="fade-in rounded-2xl border-2 border-ink-200 bg-ink-50/60 p-4 space-y-2.5">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+                <h3 className="text-xs font-bold uppercase tracking-wide text-ink-500">
                   What the teacher sees
                 </h3>
-                <div className="flex gap-1.5 text-[10px] font-medium">
-                  <span className="rounded-full bg-ink-900 px-2 py-0.5 text-white">{analysis.subject}</span>
-                  <span className="rounded-full bg-white border border-ink-200 px-2 py-0.5 text-ink-600">{analysis.topic}</span>
-                  <span className="rounded-full bg-white border border-ink-200 px-2 py-0.5 text-ink-600">{analysis.difficulty}</span>
+                <div className="flex gap-1.5 text-[10px] font-bold">
+                  <span className="rounded-full bg-mint-400 px-2 py-0.5 text-white">{analysis.subject}</span>
+                  <span className="rounded-full bg-white border-2 border-ink-200 px-2 py-0.5 text-ink-600">{analysis.topic}</span>
+                  <span className="rounded-full bg-white border-2 border-ink-200 px-2 py-0.5 text-ink-600">{analysis.difficulty}</span>
                 </div>
               </div>
 
               <div className="text-sm text-ink-800 leading-relaxed">
-                <span className="font-medium">Question: </span>
+                <span className="font-bold">Question: </span>
                 {analysis.questionDetected}
               </div>
 
               {analysis.studentAttempt && (
                 <div className="text-sm text-ink-700">
-                  <span className="font-medium">Your attempt: </span>
+                  <span className="font-bold">Your attempt: </span>
                   {analysis.studentAttempt}
                 </div>
               )}
               {analysis.studentMistake && (
                 <div className="text-sm text-ink-700">
-                  <span className="font-medium">I can see a possible slip: </span>
+                  <span className="font-bold">I can see a possible slip: </span>
                   {analysis.studentMistake}
                 </div>
               )}
               {analysis.stuckAt && (
                 <div className="text-sm text-ink-700">
-                  <span className="font-medium">Where you&apos;re stuck: </span>
+                  <span className="font-bold">Where you&apos;re stuck: </span>
                   {analysis.stuckAt}
                 </div>
               )}
 
               {analysis.watchOuts.length > 0 && (
-                <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
-                  <p className="text-xs font-semibold text-amber-700 mb-1">⚠️ Watch out</p>
+                <div className="rounded-xl bg-amber-50 border-2 border-amber-200 px-3 py-2">
+                  <p className="text-xs font-bold text-amber-700 mb-1 flex items-center gap-1">
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                    Watch out
+                  </p>
                   <ul className="list-disc list-inside text-xs text-amber-800 space-y-0.5">
                     {analysis.watchOuts.map((w, i) => (
                       <li key={i}>{w}</li>
@@ -222,8 +230,11 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
               )}
 
               {analysis.suggestedFirstStep && (
-                <div className="rounded-lg bg-white border border-ink-200 px-3 py-2 text-xs text-ink-600">
-                  <span className="font-medium text-ink-700">💡 Suggested first step: </span>
+                <div className="rounded-xl bg-white border-2 border-ink-200 px-3 py-2 text-xs text-ink-600">
+                  <span className="font-bold text-ink-700 flex items-center gap-1 mb-0.5">
+                    <Lightbulb className="h-3.5 w-3.5 text-amber-400" />
+                    Suggested first step:
+                  </span>
                   {analysis.suggestedFirstStep}
                 </div>
               )}
@@ -235,8 +246,8 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
               )}
 
               {/* Teacher assistance modes */}
-              <div className="pt-2 border-t border-ink-200">
-                <p className="text-xs font-semibold text-ink-700 mb-2">
+              <div className="pt-2 border-t-2 border-ink-200">
+                <p className="text-xs font-bold text-ink-700 mb-2">
                   How would you like the teacher to help?
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -248,17 +259,17 @@ export function AskMyTeacher({ onStart, disabled }: AskMyTeacherProps) {
                       disabled={disabled}
                       title={a.description}
                       className={
-                        "flex flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left transition-colors disabled:opacity-50 " +
+                        "flex flex-col items-start gap-0.5 rounded-xl border-2 px-3 py-2 text-left transition-colors disabled:opacity-50 " +
                         (a.id === DEFAULT_ACTION
-                          ? "border-ink-900 bg-ink-900 text-white hover:bg-ink-800"
+                          ? "border-mint-500 bg-mint-400 text-white hover:bg-mint-500"
                           : "border-ink-200 bg-white text-ink-700 hover:border-ink-400 hover:bg-ink-50")
                       }
                     >
-                      <span className="text-sm font-medium">
-                        {a.icon} {a.label}
+                      <span className="text-sm font-bold">
+                        {a.label}
                         {a.id === DEFAULT_ACTION && (
                           <span className={"ml-1 text-[9px] font-normal " + (a.id === DEFAULT_ACTION ? "text-white/70" : "text-ink-400")}>
-                            · default
+                            \u00b7 default
                           </span>
                         )}
                       </span>

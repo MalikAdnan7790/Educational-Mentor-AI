@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { Brain } from "lucide-react";
 
 interface DnaTrait {
   label: string;
@@ -57,21 +58,28 @@ const SUBJECT_LABELS: Record<string, string> = {
 
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-ink-50 px-3 py-2 text-center">
-      <div className="text-sm font-semibold text-ink-800">{value}</div>
-      <div className="text-[11px] text-ink-400">{label}</div>
+    <div className="rounded-xl border-2 border-ink-100 bg-white px-3 py-2 text-center">
+      <div className="text-sm font-extrabold text-ink-900">{value}</div>
+      <div className="text-[11px] font-bold text-ink-400">{label}</div>
     </div>
   );
 }
 
 export function LearningDna({ hasData, traits, stats, topMistakes, summaryLine }: LearningDnaProps) {
   return (
-    <div className="card p-5">
+    <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
       <div className="mb-1">
-        <h3 className="text-sm font-semibold text-ink-800">Learning DNA</h3>
-        <p className="text-xs text-ink-400">
-          {hasData ? summaryLine ?? "Based on your activity so far." : "Built only from what you actually do — no labels, no guesswork."}
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/15">
+            <Brain className="h-5 w-5 text-purple-500" />
+          </div>
+          <div>
+            <h3 className="text-sm font-extrabold text-ink-900">Learning DNA</h3>
+            <p className="text-xs text-ink-400">
+              {hasData ? summaryLine ?? "Based on your activity so far." : "Built only from what you actually do — no labels, no guesswork."}
+            </p>
+          </div>
+        </div>
       </div>
 
       {!hasData ? (
@@ -82,15 +90,27 @@ export function LearningDna({ hasData, traits, stats, topMistakes, summaryLine }
         <>
           {traits.length > 0 ? (
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              {traits.map((t) => (
-                <div key={t.label} className="rounded-lg border border-ink-100 p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-base">{t.icon}</span>
-                    <span className="text-sm font-medium text-ink-800">{t.label}</span>
+              {traits.map((t, i) => {
+                const traitColors = [
+                  { badge: "bg-purple-500/15", text: "text-purple-500", border: "border-purple-200" },
+                  { badge: "bg-mint-500/15", text: "text-mint-500", border: "border-mint-200" },
+                  { badge: "bg-sky-500/15", text: "text-sky-500", border: "border-sky-200" },
+                  { badge: "bg-orange-500/15", text: "text-orange-500", border: "border-orange-200" },
+                  { badge: "bg-amber-500/15", text: "text-amber-500", border: "border-amber-200" },
+                ];
+                const color = traitColors[i % traitColors.length];
+                return (
+                  <div key={t.label} className={clsx("rounded-xl border-2 p-3", color.border)}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className={clsx("flex h-8 w-8 items-center justify-center rounded-lg", color.badge)}>
+                        <Brain className={clsx("h-4 w-4", color.text)} />
+                      </div>
+                      <span className="text-sm font-bold text-ink-800">{t.label}</span>
+                    </div>
+                    <p className="text-xs text-ink-500 leading-relaxed">{t.evidence}</p>
                   </div>
-                  <p className="text-xs text-ink-500 leading-relaxed">{t.evidence}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="mt-3 text-sm text-ink-400">
@@ -108,14 +128,14 @@ export function LearningDna({ hasData, traits, stats, topMistakes, summaryLine }
 
           {topMistakes.length > 0 && (
             <div className="mt-4">
-              <p className="text-xs font-medium text-ink-600 mb-1.5">Most frequent mistakes</p>
+              <p className="text-xs font-bold text-ink-600 mb-1.5">Most frequent mistakes</p>
               <div className="flex flex-wrap gap-1.5">
                 {topMistakes.map((m) => (
                   <span
                     key={m.type}
-                    className="rounded-full bg-coral-500/10 px-2.5 py-1 text-xs text-coral-500"
+                    className="rounded-full bg-coral-500/10 px-2.5 py-1 text-xs font-bold text-coral-500"
                   >
-                    {MISTAKE_LABELS[m.type] ?? m.type} ×{m.count}
+                    {MISTAKE_LABELS[m.type] ?? m.type} x{m.count}
                   </span>
                 ))}
               </div>
@@ -124,14 +144,14 @@ export function LearningDna({ hasData, traits, stats, topMistakes, summaryLine }
 
           {stats.topSubjects.length > 0 && (
             <div className="mt-3">
-              <p className="text-xs font-medium text-ink-600 mb-1.5">Most practiced</p>
+              <p className="text-xs font-bold text-ink-600 mb-1.5">Most practiced</p>
               <div className="flex flex-wrap gap-1.5">
                 {stats.topSubjects.map((s) => (
                   <span
                     key={s.subject}
-                    className={clsx("rounded-full px-2.5 py-1 text-xs text-ink-600 bg-ink-50")}
+                    className={clsx("rounded-full px-2.5 py-1 text-xs font-medium text-ink-600 bg-ink-50")}
                   >
-                    {SUBJECT_LABELS[s.subject] ?? s.subject} ×{s.count}
+                    {SUBJECT_LABELS[s.subject] ?? s.subject} x{s.count}
                   </span>
                 ))}
               </div>

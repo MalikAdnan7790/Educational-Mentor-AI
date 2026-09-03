@@ -9,13 +9,13 @@ interface ScoreRingProps {
 
 export function ScoreRing({ value, size = 180, label, sublabel }: ScoreRingProps) {
   const pct = Math.round(value * 100);
-  const stroke = 14;
+  const stroke = 20;
   const radius = (size - stroke) / 2;
   const circ = 2 * Math.PI * radius;
   const offset = circ * (1 - Math.max(0, Math.min(1, value)));
 
   const color =
-    pct >= 75 ? "text-mint-500" : pct >= 50 ? "text-amber-500" : "text-coral-500";
+    pct >= 75 ? "text-mint-400" : pct >= 50 ? "text-amber-400" : "text-coral-500";
 
   return (
     <div className="flex flex-col items-center">
@@ -40,11 +40,11 @@ export function ScoreRing({ value, size = 180, label, sublabel }: ScoreRingProps
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-4xl font-semibold tabular-nums">{pct}%</span>
-          {label && <span className="mt-1 text-xs font-medium uppercase tracking-wider text-ink-500">{label}</span>}
+          <span className="text-4xl font-extrabold tabular-nums text-ink-900">{pct}%</span>
+          {label && <span className="mt-1 text-xs font-bold uppercase tracking-wider text-ink-500">{label}</span>}
         </div>
       </div>
-      {sublabel && <p className="mt-3 text-sm text-ink-600">{sublabel}</p>}
+      {sublabel && <p className="mt-3 text-sm font-medium text-ink-600">{sublabel}</p>}
     </div>
   );
 }

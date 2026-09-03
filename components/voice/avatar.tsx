@@ -17,10 +17,21 @@ export function Avatar({ gender, state, className }: AvatarProps) {
       <div
         className={clsx(
           "absolute inset-0 rounded-full transition-all duration-700",
-          state === "listening" && "animate-pulse bg-blue-200/40 scale-110",
+          state === "listening" && "animate-pulse bg-sky-200/40 scale-110",
           state === "thinking" && "animate-pulse bg-amber-200/40 scale-105",
-          state === "speaking" && "bg-emerald-200/40 scale-110",
+          state === "speaking" && "bg-mint-200/40 scale-110",
           state === "idle" && "bg-ink-100/60 scale-100",
+        )}
+      />
+
+      {/* Mint border ring */}
+      <div
+        className={clsx(
+          "absolute inset-0 rounded-full border-3 transition-all duration-500",
+          state === "speaking" && "border-mint-400",
+          state === "listening" && "border-sky-400",
+          state === "thinking" && "border-amber-400",
+          state === "idle" && "border-ink-200",
         )}
       />
 
@@ -84,11 +95,11 @@ export function Avatar({ gender, state, className }: AvatarProps) {
       {/* Sound waves when speaking */}
       {state === "speaking" && (
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-          <div className="w-1 h-3 bg-emerald-400 rounded-full animate-sound-wave" style={{ animationDelay: "0ms" }} />
-          <div className="w-1 h-5 bg-emerald-400 rounded-full animate-sound-wave" style={{ animationDelay: "150ms" }} />
-          <div className="w-1 h-4 bg-emerald-400 rounded-full animate-sound-wave" style={{ animationDelay: "300ms" }} />
-          <div className="w-1 h-6 bg-emerald-400 rounded-full animate-sound-wave" style={{ animationDelay: "100ms" }} />
-          <div className="w-1 h-3 bg-emerald-400 rounded-full animate-sound-wave" style={{ animationDelay: "250ms" }} />
+          <div className="w-1 h-3 bg-mint-400 rounded-full animate-sound-wave" style={{ animationDelay: "0ms" }} />
+          <div className="w-1 h-5 bg-mint-400 rounded-full animate-sound-wave" style={{ animationDelay: "150ms" }} />
+          <div className="w-1 h-4 bg-mint-400 rounded-full animate-sound-wave" style={{ animationDelay: "300ms" }} />
+          <div className="w-1 h-6 bg-mint-400 rounded-full animate-sound-wave" style={{ animationDelay: "100ms" }} />
+          <div className="w-1 h-3 bg-mint-400 rounded-full animate-sound-wave" style={{ animationDelay: "250ms" }} />
         </div>
       )}
     </div>

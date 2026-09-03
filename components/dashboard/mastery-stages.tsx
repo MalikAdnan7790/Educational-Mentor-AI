@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { BookOpen, Pencil, Trophy } from "lucide-react";
 
 type Stage = "I_KNOW" | "I_CAN" | "I_MASTER";
 
@@ -25,24 +26,27 @@ interface MasteryStagesProps {
   counts: { iKnow: number; iCan: number; iMaster: number };
 }
 
-const STAGE_META: Record<Stage, { label: string; icon: string; badge: string; bar: string }> = {
+const STAGE_META: Record<Stage, { label: string; icon: typeof BookOpen; badge: string; bar: string; bg: string }> = {
   I_KNOW: {
     label: "I KNOW",
-    icon: "📘",
-    badge: "bg-ink-100 text-ink-600",
-    bar: "bg-ink-300",
+    icon: BookOpen,
+    badge: "bg-mint-400/15 text-mint-600",
+    bar: "bg-mint-500",
+    bg: "bg-mint-400/10",
   },
   I_CAN: {
     label: "I CAN",
-    icon: "✏️",
-    badge: "bg-amber-400/15 text-amber-500",
-    bar: "bg-amber-400",
+    icon: Pencil,
+    badge: "bg-sky-400/15 text-sky-500",
+    bar: "bg-sky-400",
+    bg: "bg-sky-400/10",
   },
   I_MASTER: {
     label: "I MASTER",
-    icon: "🏆",
-    badge: "bg-mint-400/15 text-mint-600",
-    bar: "bg-mint-500",
+    icon: Trophy,
+    badge: "bg-purple-400/15 text-purple-500",
+    bar: "bg-purple-500",
+    bg: "bg-purple-400/10",
   },
 };
 
@@ -52,7 +56,7 @@ function evidenceLine(e: MasteryItem["evidence"]): string {
     parts.push(`${e.problemsCorrect}/${e.problemsAttempted} solved`);
     if (e.hintsUsed > 0) parts.push(`${e.hintsUsed} hint${e.hintsUsed === 1 ? "" : "s"}`);
   }
-  if (e.aiFreeCorrect > 0) parts.push("AI-free ✓");
+  if (e.aiFreeCorrect > 0) parts.push("AI-free");
   if (e.explainBacks > 0) {
     const score = e.bestExplainScore !== null ? ` (${Math.round(e.bestExplainScore)}%)` : "";
     parts.push(`explained back${score}`);
@@ -64,13 +68,13 @@ export function MasteryStages({ items, counts }: MasteryStagesProps) {
   const total = items.length;
 
   return (
-    <div className="card p-5">
+    <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
       <div className="mb-3">
-        <h3 className="text-sm font-semibold text-ink-800">My Mastery Journey</h3>
+        <h3 className="text-sm font-extrabold text-ink-900">My Mastery Journey</h3>
         <p className="text-xs text-ink-400">
-          Every topic moves from <span className="font-medium">I KNOW</span> →{" "}
-          <span className="font-medium">I CAN</span> →{" "}
-          <span className="font-medium">I MASTER</span> based on what you actually show.
+          Every topic moves from <span className="font-bold">I KNOW</span> {"\u2192"}{" "}
+          <span className="font-bold">I CAN</span> {"\u2192"}{" "}
+          <span className="font-bold">I MASTER</span> based on what you actually show.
         </p>
       </div>
 
@@ -81,49 +85,52 @@ export function MasteryStages({ items, counts }: MasteryStagesProps) {
       ) : (
         <>
           <div className="mb-4 grid grid-cols-3 gap-2">
-            {(Object.keys(STAGE_META) as Stage[]).map((stage) => (
-              <div
-                key={stage}
-                className={clsx(
-                  "rounded-lg px-3 py-2 text-center",
-                  stage === "I_KNOW" && "bg-ink-50",
-                  stage === "I_CAN" && "bg-amber-400/10",
-                  stage === "I_MASTER" && "bg-mint-400/10",
-                )}
-              >
-                <div className="text-lg font-semibold text-ink-800">
-                  {stage === "I_KNOW" ? counts.iKnow : stage === "I_CAN" ? counts.iCan : counts.iMaster}
+            {(Object.keys(STAGE_META) as Stage[]).map((stage) => {
+              const meta = STAGE_META[stage];
+              const Icon = meta.icon;
+              const count = stage === "I_KNOW" ? counts.iKnow : stage === "I_CAN" ? counts.iCan : counts.iMaster;
+              return (
+                <div
+                  key={stage}
+                  className={clsx(
+                    "rounded-xl px-3 py-2.5 text-center",
+                    meta.bg
+                  )}
+                >
+                  <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-white/80 mb-1">
+                    <Icon className={clsx("h-4 w-4", stage === "I_KNOW" ? "text-mint-500" : stage === "I_CAN" ? "text-sky-500" : "text-purple-500")} />
+                  </div>
+                  <div className={clsx("text-lg font-extrabold", stage === "I_KNOW" ? "text-mint-600" : stage === "I_CAN" ? "text-sky-600" : "text-purple-600")}>{count}</div>
+                  <span className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-ink-500">{meta.label}</span>
                 </div>
-                <div className="text-[11px] text-ink-500">
-                  {STAGE_META[stage].icon} {STAGE_META[stage].label}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {items.map((item) => {
               const meta = STAGE_META[item.stage];
+              const Icon = meta.icon;
               return (
-                <div key={`${item.subjectKey}:${item.topic}`} className="rounded-lg border border-ink-100 p-3">
+                <div key={`${item.subjectKey}:${item.topic}`} className="rounded-xl border-2 border-ink-100 p-3">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <div className="min-w-0">
-                      <span className="text-sm font-medium text-ink-800 truncate block">{item.topic}</span>
+                      <span className="text-sm font-bold text-ink-800 truncate block">{item.topic}</span>
                       {item.subjectKey && (
-                        <span className="text-[11px] text-ink-400 uppercase tracking-wide">{item.subjectKey}</span>
+                        <span className="text-[11px] text-ink-400 font-medium uppercase tracking-wide">{item.subjectKey}</span>
                       )}
                     </div>
-                    <span className={clsx("shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", meta.badge)}>
+                    <span className={clsx("shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold", meta.badge)}>
                       {meta.label}
                     </span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-ink-100 overflow-hidden mb-1.5">
+                  <div className="h-2 rounded-full bg-ink-100 overflow-hidden mb-1.5">
                     <div
                       className={clsx("h-full rounded-full", meta.bar)}
                       style={{ width: `${Math.max(3, Math.min(100, item.progressPct))}%` }}
                     />
                   </div>
-                  <p className="text-[11px] text-ink-400">{evidenceLine(item.evidence)}</p>
+                  <p className="text-[11px] font-medium text-ink-400">{evidenceLine(item.evidence)}</p>
                 </div>
               );
             })}

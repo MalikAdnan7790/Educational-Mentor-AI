@@ -197,13 +197,13 @@ export function VoiceConsole({
       <Avatar gender={avatarGender} state={avatarState} className="h-32 w-32 sm:h-40 sm:w-40" />
 
       {/* Status text */}
-      <p className="text-sm text-ink-500 text-center">
+      <p className="text-sm font-medium text-ink-500 text-center">
         {state === "idle" && "Tap the microphone to start"}
-        {state === "listening" && "Listening..."}
-        {state === "processing" && "Processing..."}
-        {state === "thinking" && "Thinking..."}
-        {state === "speaking" && "Speaking... (tap mic to interrupt)"}
-        {state === "error" && error}
+        {state === "listening" && <span className="text-sky-600">Listening...</span>}
+        {state === "processing" && <span className="text-amber-600">Processing...</span>}
+        {state === "thinking" && <span className="text-purple-600">Thinking...</span>}
+        {state === "speaking" && <span className="text-mint-600">Speaking... (tap mic to interrupt)</span>}
+        {state === "error" && <span className="text-coral-600">{error}</span>}
       </p>
 
       {/* Mic button */}
@@ -231,7 +231,7 @@ export function VoiceConsole({
 
       {/* Transcript */}
       {(messages.length > 0 || interimTranscript) && (
-        <div className="w-full card p-4">
+        <div className="w-full rounded-2xl border-2 border-ink-100 bg-white p-4">
           <Transcript
             messages={messages}
             interimTranscript={interimTranscript}

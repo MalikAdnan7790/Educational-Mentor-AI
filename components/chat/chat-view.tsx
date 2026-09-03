@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
+import { MessageSquare, AlertCircle, X } from "lucide-react";
 import { MessageBubble } from "./message-bubble";
 import { Composer } from "./composer";
 import { ModeSelector } from "./mode-selector";
@@ -225,7 +226,7 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
   return (
     <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="flex flex-col gap-2 border-b border-ink-100 bg-white px-4 py-3">
+      <div className="flex flex-col gap-2 border-b-2 border-ink-100 bg-white px-4 py-3">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <ModeSelector
             value={mode}
@@ -253,8 +254,10 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3" role="log" aria-live="polite" aria-label="Conversation messages">
         {messages.length === 0 && !isStreaming && (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className="text-4xl mb-3">💬</div>
-            <h2 className="text-lg font-semibold text-ink-800 mb-1">Ask Anything</h2>
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-400/15 mb-3">
+              <MessageSquare className="h-8 w-8 text-sky-500" />
+            </div>
+            <h2 className="text-lg font-extrabold text-ink-900 mb-1">Ask Anything</h2>
             <p className="text-sm text-ink-500 max-w-sm">
               Ask a question in English, Urdu, or Roman Urdu. Attach an image or PDF for visual problems.
             </p>
@@ -273,7 +276,7 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
               <div className="flex justify-end mt-1">
                 <button
                   onClick={() => setExplainBackTarget({ topic: topic! })}
-                  className="text-xs text-ink-400 hover:text-ink-600 underline"
+                  className="text-xs font-medium text-ink-400 hover:text-ink-600 underline"
                 >
                   Explain it back
                 </button>
@@ -293,19 +296,17 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
         )}
         {isStreaming && !streamingText && (
           <div className="flex gap-1.5 px-4 py-2">
-            <span className="thinking-dot h-2 w-2 rounded-full bg-ink-300" />
-            <span className="thinking-dot h-2 w-2 rounded-full bg-ink-300" />
-            <span className="thinking-dot h-2 w-2 rounded-full bg-ink-300" />
+            <span className="thinking-dot h-2 w-2 rounded-full bg-mint-400" />
+            <span className="thinking-dot h-2 w-2 rounded-full bg-mint-400" />
+            <span className="thinking-dot h-2 w-2 rounded-full bg-mint-400" />
           </div>
         )}
 
         {error && (
-          <div className="rounded-xl border border-coral-200 bg-coral-50 px-4 py-3 flex items-start gap-3">
-            <svg className="h-5 w-5 text-coral-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+          <div className="rounded-2xl border-2 border-coral-200 bg-coral-50 px-4 py-3 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-coral-500 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-coral-700">{error.message}</p>
+              <p className="text-sm font-medium text-coral-700">{error.message}</p>
               {error.retryContent && (
                 <button
                   onClick={() => {
@@ -314,7 +315,7 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
                     void handleSend(retry.retryContent!, retry.retryImage, retry.retryAction);
                   }}
                   aria-label="Retry sending message"
-                  className="mt-2 text-xs font-medium text-coral-600 hover:text-coral-800 underline"
+                  className="mt-2 text-xs font-bold text-coral-600 hover:text-coral-800 underline"
                 >
                   Try again
                 </button>
@@ -325,9 +326,7 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
               aria-label="Dismiss error"
               className="text-coral-400 hover:text-coral-600 shrink-0"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X className="h-4 w-4" />
             </button>
           </div>
         )}

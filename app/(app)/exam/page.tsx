@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import { FileCheck } from "lucide-react";
 
 interface Subject {
   key: string;
@@ -113,16 +114,21 @@ export default function ExamPage() {
 
   return (
     <div className="space-y-6">
-      <section>
-        <h1 className="text-2xl font-bold text-ink-900">Exam Simulator</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          Timed practice exams on any topic — or quizzes generated from your own uploaded notes.
-        </p>
+      <section className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint-400/15 text-mint-500">
+          <FileCheck className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">Exam Simulator</h1>
+          <p className="mt-0.5 text-sm text-ink-500">
+            Timed practice exams on any topic — or quizzes generated from your own uploaded notes.
+          </p>
+        </div>
       </section>
 
       {/* Create */}
-      <section className="card max-w-xl p-6">
-        <div className="flex gap-1 rounded-xl border border-ink-200 bg-white p-1">
+      <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-xl p-6">
+        <div className="flex gap-1 rounded-xl border-2 border-ink-200 bg-white p-1">
           {(
             [
               { value: "topic", label: "From a topic" },
@@ -133,7 +139,7 @@ export default function ExamPage() {
               key={s.value}
               onClick={() => setSource(s.value)}
               className={clsx(
-                "flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition",
+                "flex-1 rounded-xl px-3 py-1.5 text-xs font-medium transition",
                 source === s.value ? "bg-ink-900 text-white" : "text-ink-700 hover:bg-ink-50",
               )}
             >
@@ -202,13 +208,13 @@ export default function ExamPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-medium text-ink-600">Difficulty</label>
-              <div className="mt-1 flex gap-1 rounded-xl border border-ink-200 bg-white p-1">
+              <div className="mt-1 flex gap-1 rounded-xl border-2 border-ink-200 bg-white p-1">
                 {DIFFICULTIES.map((d) => (
                   <button
                     key={d}
                     onClick={() => setDifficulty(d)}
                     className={clsx(
-                      "flex-1 rounded-lg px-2 py-1.5 text-xs font-medium transition",
+                      "flex-1 rounded-xl px-2 py-1.5 text-xs font-medium transition",
                       difficulty === d ? "bg-ink-900 text-white" : "text-ink-700 hover:bg-ink-50",
                     )}
                   >
@@ -256,11 +262,11 @@ export default function ExamPage() {
 
       {/* Past exams */}
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-400">Recent exams</h2>
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">Recent exams</h2>
         <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {loading && <div className="col-span-full text-sm text-ink-500">Loading…</div>}
           {!loading && exams.length === 0 && (
-            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 p-6 text-center text-sm text-ink-500">
+            <div className="col-span-full rounded-2xl border-2 border-dashed border-ink-200 p-6 text-center text-sm text-ink-500">
               No exams yet — generate your first one above.
             </div>
           )}
@@ -268,19 +274,19 @@ export default function ExamPage() {
             <Link
               key={ex.id}
               href={`/exam/${ex.id}`}
-              className="card p-4 transition-all hover:shadow-md hover:-translate-y-0.5"
+              className="rounded-2xl border-2 border-ink-100 bg-white p-4 transition-all hover:shadow-md hover:-translate-y-0.5"
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="truncate text-sm font-medium text-ink-900">{ex.title}</span>
                 <span
                   className={clsx(
-                    "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                    "shrink-0 rounded-xl px-2 py-0.5 text-[10px] font-semibold",
                     ex.status === "GRADED"
                       ? ex.score != null && ex.score >= 70
                         ? "bg-mint-500/15 text-mint-700"
                         : "bg-amber-400/15 text-amber-700"
                       : ex.status === "ACTIVE"
-                        ? "bg-blue-50 text-blue-600"
+                        ? "bg-mint-50 text-mint-600"
                         : "bg-ink-100 text-ink-500",
                   )}
                 >

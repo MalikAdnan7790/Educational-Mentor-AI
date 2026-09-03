@@ -1,6 +1,7 @@
 "use client";
 
 import { clsx } from "clsx";
+import { Pause, Play, Volume2, VolumeX, RotateCcw } from "lucide-react";
 import { VOICE_PRESETS } from "@/lib/voice/presets";
 
 interface VoiceControlsProps {
@@ -38,16 +39,16 @@ export function VoiceControls({
     <div className="flex flex-col items-center gap-3 px-4">
       {/* Voice preset selector */}
       <div className="flex items-center gap-1.5 flex-wrap justify-center">
-        <span className="text-xs text-ink-500 mr-1">Voice:</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-ink-500 mr-1">Voice:</span>
         {Object.values(VOICE_PRESETS).map((p) => (
           <button
             key={p.id}
             onClick={() => onPresetChange(p.id)}
             title={p.description}
             className={clsx(
-              "rounded-lg px-2.5 py-1 text-xs font-medium transition-colors",
+              "rounded-xl px-2.5 py-1 text-xs font-semibold transition-colors",
               preset === p.id
-                ? "bg-emerald-600 text-white"
+                ? "bg-mint-500 text-white"
                 : "bg-ink-100 text-ink-600 hover:bg-ink-200",
             )}
           >
@@ -59,15 +60,15 @@ export function VoiceControls({
       <div className="flex items-center gap-3">
         {/* Rate selector */}
         <div className="flex items-center gap-1">
-          <span className="text-xs text-ink-500 mr-1">Speed:</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-ink-500 mr-1">Speed:</span>
           {RATES.map((r) => (
             <button
               key={r}
               onClick={() => onRateChange(r)}
               className={clsx(
-                "rounded-lg px-2 py-1 text-xs font-medium transition-colors",
+                "rounded-xl px-2 py-1 text-xs font-semibold transition-colors",
                 rate === r
-                  ? "bg-blue-600 text-white"
+                  ? "bg-sky-500 text-white"
                   : "bg-ink-100 text-ink-600 hover:bg-ink-200",
               )}
             >
@@ -80,19 +81,10 @@ export function VoiceControls({
         {isSpeaking && (
           <button
             onClick={isPaused ? onResume : onPause}
-            className="rounded-lg p-2 bg-ink-100 text-ink-600 hover:bg-ink-200 transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-400/15 text-purple-500 hover:bg-purple-400/25 transition-colors"
             aria-label={isPaused ? "Resume" : "Pause"}
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-              {isPaused ? (
-                <polygon points="5 3 19 12 5 21 5 3" />
-              ) : (
-                <>
-                  <rect x="6" y="4" width="4" height="16" />
-                  <rect x="14" y="4" width="4" height="16" />
-                </>
-              )}
-            </svg>
+            {isPaused ? <Play className="h-5 w-5" /> : <Pause className="h-5 w-5" />}
           </button>
         )}
 
@@ -100,39 +92,24 @@ export function VoiceControls({
         <button
           onClick={onToggleMute}
           className={clsx(
-            "rounded-lg p-2 transition-colors",
-            isMuted ? "bg-amber-100 text-amber-600" : "bg-ink-100 text-ink-600 hover:bg-ink-200",
+            "flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
+            isMuted
+              ? "bg-amber-400/15 text-amber-500"
+              : "bg-ink-100 text-ink-600 hover:bg-ink-200",
           )}
           aria-label={isMuted ? "Unmute" : "Mute"}
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            {isMuted ? (
-              <>
-                <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                <line x1="23" y1="9" x2="17" y2="15" />
-                <line x1="17" y1="9" x2="23" y2="15" />
-              </>
-            ) : (
-              <>
-                <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-              </>
-            )}
-          </svg>
+          {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
         </button>
 
         {/* Replay */}
         <button
           onClick={onReplay}
           disabled={!canReplay}
-          className="rounded-lg p-2 bg-ink-100 text-ink-600 hover:bg-ink-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-400/15 text-sky-500 hover:bg-sky-400/25 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           aria-label="Replay last response"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="1 4 1 10 7 10" />
-            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-          </svg>
+          <RotateCcw className="h-5 w-5" />
         </button>
       </div>
     </div>

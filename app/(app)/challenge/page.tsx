@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import { Trophy } from "lucide-react";
 
 interface ChallengeItem {
   id: string;
@@ -154,20 +155,25 @@ export default function ChallengePage() {
 
   return (
     <div className="space-y-6">
-      <section>
-        <h1 className="text-2xl font-bold text-ink-900">Daily AI Challenge</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          One problem a day, picked from your weakest areas — slightly harder than your comfort
-          zone. Solve it without hints.
-        </p>
+      <section className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/15 text-amber-500">
+          <Trophy className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">Daily AI Challenge</h1>
+          <p className="mt-0.5 text-sm text-ink-500">
+            One problem a day, picked from your weakest areas — slightly harder than your comfort
+            zone. Solve it without hints.
+          </p>
+        </div>
       </section>
 
       {/* Today's challenge */}
       {(!current || current.status === "GRADED") && !grade && (
-        <section className="card max-w-2xl p-6 text-center">
+        <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6 text-center">
           {solvedToday ? (
             <>
-              <h2 className="text-lg font-semibold text-ink-900">
+              <h2 className="text-lg font-bold text-ink-900">
                 Today&apos;s challenge is done — score {Math.round(todays!.score ?? 0)}/100
               </h2>
               <p className="mt-2 text-sm text-ink-500">
@@ -176,7 +182,7 @@ export default function ChallengePage() {
             </>
           ) : (
             <>
-              <h2 className="text-lg font-semibold text-ink-900">Ready for today&apos;s problem?</h2>
+              <h2 className="text-lg font-bold text-ink-900">Ready for today&apos;s problem?</h2>
               <p className="mt-2 text-sm text-ink-500">
                 It will be generated from your real performance data — no topic picking needed.
               </p>
@@ -190,7 +196,7 @@ export default function ChallengePage() {
       )}
 
       {current && current.status === "PENDING" && (
-        <section className="card max-w-2xl p-6">
+        <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6">
           <div className="flex flex-wrap items-center gap-2 text-xs text-ink-500">
             {current.subjectKey && <span className="chip">{current.subjectKey}</span>}
             {current.topic && <span className="chip">{current.topic}</span>}
@@ -241,14 +247,14 @@ export default function ChallengePage() {
       {grade && (
         <section
           className={clsx(
-            "card max-w-2xl p-6",
+            "rounded-2xl border-2 max-w-2xl p-6",
             grade.isCorrect ? "border-mint-400/50 bg-mint-500/5" : "border-coral-400/40 bg-coral-500/5",
           )}
         >
           <div className="flex flex-wrap items-center gap-3">
             <span
               className={clsx(
-                "rounded-full px-2.5 py-1 text-xs font-semibold",
+                "rounded-xl px-2.5 py-1 text-xs font-semibold",
                 grade.isCorrect ? "bg-mint-500/15 text-mint-700" : "bg-coral-500/10 text-coral-600",
               )}
             >
@@ -290,24 +296,24 @@ export default function ChallengePage() {
 
       {/* History */}
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">
           Past challenges
         </h2>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {loaded && challenges.length === 0 && (
-            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 p-6 text-center text-sm text-ink-500">
+            <div className="col-span-full rounded-2xl border-2 border-dashed border-ink-200 p-6 text-center text-sm text-ink-500">
               No challenges yet — get your first one above.
             </div>
           )}
           {challenges.map((c) => (
-            <div key={c.id} className="card p-4">
+            <div key={c.id} className="rounded-2xl border-2 border-ink-100 bg-white p-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="truncate text-sm font-medium text-ink-900">
                   {c.topic ?? c.subjectKey ?? "General"}
                 </span>
                 <span
                   className={clsx(
-                    "rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                    "rounded-xl px-2 py-0.5 text-[10px] font-semibold",
                     c.status === "GRADED"
                       ? (c.score ?? 0) >= 60
                         ? "bg-mint-500/15 text-mint-700"

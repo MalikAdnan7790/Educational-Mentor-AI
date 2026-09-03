@@ -15,10 +15,10 @@ export function Transcript({ messages, interimTranscript, isRTL }: TranscriptPro
         <div
           key={i}
           className={clsx(
-            "rounded-xl px-4 py-2.5 text-sm max-w-[85%]",
+            "rounded-2xl px-4 py-2.5 text-sm max-w-[85%]",
             msg.role === "user"
-              ? "self-end bg-blue-600 text-white"
-              : "self-start bg-white border border-ink-100 text-ink-800",
+              ? "self-end bg-mint-500 text-white"
+              : "self-start bg-white border-2 border-ink-100 text-ink-800",
           )}
           dir={msg.isRTL ? "rtl" : "ltr"}
           lang={msg.isRTL ? "ur" : undefined}
@@ -30,7 +30,7 @@ export function Transcript({ messages, interimTranscript, isRTL }: TranscriptPro
       {interimTranscript && (
         <div
           className={clsx(
-            "self-end rounded-xl px-4 py-2.5 text-sm max-w-[85%] bg-blue-100 text-blue-600 italic",
+            "self-end rounded-2xl px-4 py-2.5 text-sm max-w-[85%] bg-mint-100 text-mint-700 italic",
           )}
           dir={isRTL ? "rtl" : "ltr"}
         >

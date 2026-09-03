@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import { AlertTriangle, Trophy } from "lucide-react";
 import { AttemptInput } from "@/components/session/attempt-input";
 import { FeedbackPanel } from "@/components/session/feedback-panel";
 import { HintPanel } from "@/components/session/hint-panel";
@@ -255,7 +256,12 @@ export function SessionView({ sessionId }: { sessionId: string }) {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-sm text-ink-500">Loading session…</div>
+        <div className="flex items-center gap-3 rounded-2xl border-2 border-ink-100 bg-white px-6 py-4 shadow-sm">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint-400/15 text-mint-500">
+            <AlertTriangle className="h-5 w-5 animate-pulse" />
+          </span>
+          <div className="text-sm font-bold text-ink-700">Loading session…</div>
+        </div>
       </div>
     );
   }
@@ -263,8 +269,8 @@ export function SessionView({ sessionId }: { sessionId: string }) {
   if (error || !session) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="card max-w-md p-6 text-center">
-          <h2 className="text-lg font-semibold text-ink-900">Something went wrong</h2>
+        <div className="rounded-2xl border-2 border-ink-100 bg-white max-w-md p-6 text-center">
+          <h2 className="text-lg font-extrabold text-ink-900">Something went wrong</h2>
           <p className="mt-2 text-sm text-ink-600">{error ?? "Session not found"}</p>
           <button onClick={() => router.push("/")} className="btn-primary mt-4">
             Back to home
@@ -285,7 +291,7 @@ export function SessionView({ sessionId }: { sessionId: string }) {
 
   return (
     <div className="min-h-screen bg-ink-50">
-      <header className="border-b border-ink-100 bg-white">
+      <header className="border-b-2 border-ink-100 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div>
             <div className="flex items-center gap-2 text-xs text-ink-500">
@@ -295,7 +301,7 @@ export function SessionView({ sessionId }: { sessionId: string }) {
               <span>/</span>
               <span>Session</span>
             </div>
-            <h1 className="mt-1 text-lg font-semibold text-ink-900">
+            <h1 className="mt-1 text-lg font-extrabold text-ink-900">
               {session.problem.title}
             </h1>
           </div>
@@ -325,8 +331,11 @@ export function SessionView({ sessionId }: { sessionId: string }) {
 
       <main className="mx-auto max-w-6xl px-6 py-8">
         {newAchievements.length > 0 && (
-          <div className="mb-6 rounded-2xl border border-mint-500/40 bg-mint-500/10 p-5">
-            <h3 className="text-sm font-semibold text-mint-800">
+          <div className="mb-6 rounded-2xl border-2 border-mint-500/40 bg-mint-500/10 p-5">
+            <h3 className="flex items-center gap-2 text-sm font-extrabold text-mint-800">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-mint-400/20 text-mint-600">
+                <Trophy className="h-4 w-4" />
+              </span>
               Achievement{newAchievements.length > 1 ? "s" : ""} Unlocked
             </h3>
             <ul className="mt-2 space-y-1">
@@ -341,13 +350,13 @@ export function SessionView({ sessionId }: { sessionId: string }) {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
           <div className="space-y-6 lg:col-span-3">
-            <div className="card p-6">
+            <div className="rounded-2xl border-2 border-ink-100 bg-white p-6">
               <div className="flex flex-wrap items-center gap-2 text-xs text-ink-500">
                 <span className="chip">{session.problem.subject}</span>
                 <span className="chip">{session.problem.topic}</span>
                 <span className="chip">{session.problem.difficulty}</span>
               </div>
-              <h2 className="mt-3 text-xl font-semibold text-ink-900">
+              <h2 className="mt-3 text-xl font-extrabold text-ink-900">
                 {session.problem.title}
               </h2>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-ink-700">
@@ -356,8 +365,13 @@ export function SessionView({ sessionId }: { sessionId: string }) {
             </div>
 
             {prediction && !isComplete && (
-              <div className="card border-amber-400/40 bg-amber-400/10 p-6">
-                <h3 className="text-sm font-semibold text-amber-700">⚠️ Watch out</h3>
+              <div className="rounded-2xl border-2 border-amber-400/40 bg-amber-400/10 p-6">
+                <h3 className="flex items-center gap-2 text-sm font-extrabold text-amber-700">
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-amber-400/20 text-amber-600">
+                    <AlertTriangle className="h-4 w-4" />
+                  </span>
+                  Watch out
+                </h3>
                 {attempts.length === 0 ? (
                   <>
                     <p className="mt-2 text-sm font-medium text-ink-900">
@@ -385,8 +399,8 @@ export function SessionView({ sessionId }: { sessionId: string }) {
             )}
 
             {showSolution && (
-              <div className="card border-coral-500/30 bg-coral-500/5 p-6">
-                <h3 className="text-sm font-semibold text-coral-700">Full Solution</h3>
+              <div className="rounded-2xl border-2 border-coral-500/30 bg-coral-500/5 p-6">
+                <h3 className="text-sm font-extrabold text-coral-700">Full Solution</h3>
                 <p className="mt-2 whitespace-pre-wrap text-sm text-ink-800">
                   {session.problem.solution}
                 </p>
@@ -398,8 +412,8 @@ export function SessionView({ sessionId }: { sessionId: string }) {
 
           <div className="space-y-6 lg:col-span-2">
             {!isComplete && (
-              <div className="card p-6">
-                <h3 className="text-sm font-semibold text-ink-900">Your attempt</h3>
+              <div className="rounded-2xl border-2 border-ink-100 bg-white p-6">
+                <h3 className="text-sm font-extrabold text-ink-900">Your attempt</h3>
                 <div className="mt-3">
                   <AttemptInput
                     value={answer}
@@ -463,8 +477,8 @@ export function SessionView({ sessionId }: { sessionId: string }) {
             )}
 
             {isComplete && (
-              <div className="card p-6 text-center">
-                <h3 className="text-lg font-semibold text-ink-900">Session complete</h3>
+              <div className="rounded-2xl border-2 border-ink-100 bg-white p-6 text-center">
+                <h3 className="text-lg font-extrabold text-ink-900">Session complete</h3>
                 <p className="mt-2 text-sm text-ink-600">
                   {session.status === "COMPLETED"
                     ? "Great work — you solved it."

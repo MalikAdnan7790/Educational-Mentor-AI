@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { VoiceConsole } from "@/components/voice/voice-console";
 import { clsx } from "clsx";
+import { Mic } from "lucide-react";
 
 type Language = "EN" | "UR" | "ROMAN_UR";
 type Mode = "DEPENDENT" | "GUIDED" | "ADAPTIVE" | "INDEPENDENT";
@@ -65,24 +66,31 @@ export default function VoicePage() {
   if (!conversationId) {
     return (
       <div className="mx-auto max-w-lg px-4 py-8">
-        <h1 className="text-2xl font-bold text-ink-900 mb-2">Voice Teacher</h1>
-        <p className="text-ink-500 mb-6">
-          Talk to your AI teacher. Ask questions, get explanations, and practice — all by voice.
-        </p>
+        <div className="flex items-start gap-4 mb-6">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/15 text-sky-500">
+            <Mic className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-ink-900">Voice Teacher</h1>
+            <p className="text-sm text-ink-500">
+              Talk to your AI teacher. Ask questions, get explanations, and practice — all by voice.
+            </p>
+          </div>
+        </div>
 
         {/* Mode selector */}
-        <div className="mb-6">
-          <label className="text-sm font-medium text-ink-700 mb-2 block">Learning Mode</label>
+        <div className="mb-6 rounded-2xl border-2 border-ink-100 bg-white p-5">
+          <label className="text-xs font-bold uppercase tracking-wider text-ink-500 mb-3 block">Learning Mode</label>
           <div className="grid grid-cols-2 gap-2">
             {MODES.map((m) => (
               <button
                 key={m.value}
                 onClick={() => setMode(m.value)}
                 className={clsx(
-                  "rounded-xl border p-3 text-left transition-all",
+                  "rounded-2xl border-2 p-3 text-left transition-all",
                   mode === m.value
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-ink-200 bg-white hover:border-ink-300",
+                    ? "border-mint-400 bg-mint-50"
+                    : "border-ink-100 bg-white hover:border-ink-300",
                 )}
               >
                 <div className="text-sm font-medium">{m.label}</div>
@@ -93,18 +101,18 @@ export default function VoicePage() {
         </div>
 
         {/* Language selector */}
-        <div className="mb-6">
-          <label className="text-sm font-medium text-ink-700 mb-2 block">Language</label>
+        <div className="mb-6 rounded-2xl border-2 border-ink-100 bg-white p-5">
+          <label className="text-xs font-bold uppercase tracking-wider text-ink-500 mb-3 block">Language</label>
           <div className="flex gap-2">
             {LANGUAGES.map((l) => (
               <button
                 key={l.value}
                 onClick={() => setLanguage(l.value)}
                 className={clsx(
-                  "rounded-xl border px-4 py-2 text-sm transition-all",
+                  "rounded-2xl border-2 px-4 py-2 text-sm transition-all",
                   language === l.value
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-ink-200 bg-white hover:border-ink-300",
+                    ? "border-mint-400 bg-mint-50 text-mint-600"
+                    : "border-ink-100 bg-white hover:border-ink-300",
                 )}
               >
                 {l.label}
@@ -114,16 +122,16 @@ export default function VoicePage() {
         </div>
 
         {/* Avatar gender */}
-        <div className="mb-8">
-          <label className="text-sm font-medium text-ink-700 mb-2 block">Teacher Avatar</label>
+        <div className="mb-8 rounded-2xl border-2 border-ink-100 bg-white p-5">
+          <label className="text-xs font-bold uppercase tracking-wider text-ink-500 mb-3 block">Teacher Avatar</label>
           <div className="flex gap-2">
             <button
               onClick={() => setAvatarGender("MALE")}
               className={clsx(
-                "rounded-xl border px-4 py-2 text-sm transition-all",
+                "rounded-2xl border-2 px-4 py-2 text-sm transition-all",
                 avatarGender === "MALE"
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-ink-200 bg-white hover:border-ink-300",
+                  ? "border-mint-400 bg-mint-50"
+                  : "border-ink-100 bg-white hover:border-ink-300",
               )}
             >
               Male
@@ -131,10 +139,10 @@ export default function VoicePage() {
             <button
               onClick={() => setAvatarGender("FEMALE")}
               className={clsx(
-                "rounded-xl border px-4 py-2 text-sm transition-all",
+                "rounded-2xl border-2 px-4 py-2 text-sm transition-all",
                 avatarGender === "FEMALE"
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-ink-200 bg-white hover:border-ink-300",
+                  ? "border-mint-400 bg-mint-50"
+                  : "border-ink-100 bg-white hover:border-ink-300",
               )}
             >
               Female
@@ -156,7 +164,12 @@ export default function VoicePage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-lg font-bold text-ink-900">Voice Teacher</h1>
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-400/15 text-sky-500">
+            <Mic className="h-4 w-4" />
+          </div>
+          <h1 className="text-lg font-extrabold text-ink-900">Voice Teacher</h1>
+        </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-ink-400">{MODES.find((m) => m.value === mode)?.label}</span>
           <button

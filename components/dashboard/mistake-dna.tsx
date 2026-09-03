@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { Dna } from "lucide-react";
 
 interface MistakeType {
   type: string;
@@ -32,22 +33,32 @@ const TYPE_LABELS: Record<string, string> = {
 export function MistakeDNA({ total, byType }: MistakeDNAProps) {
   if (total === 0) {
     return (
-      <div className="card p-5">
-        <h3 className="text-sm font-semibold text-ink-800 mb-3">Mistake DNA</h3>
+      <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-coral-500/15">
+            <Dna className="h-5 w-5 text-coral-500" />
+          </div>
+          <h3 className="text-sm font-bold text-ink-800">Mistake DNA</h3>
+        </div>
         <p className="text-sm text-ink-400">No mistakes recorded yet.</p>
       </div>
     );
   }
 
   return (
-    <div className="card p-5">
+    <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-ink-800">Mistake DNA</h3>
-        <span className="text-xs text-ink-500">{total} total</span>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-coral-500/15">
+            <Dna className="h-5 w-5 text-coral-500" />
+          </div>
+          <h3 className="text-sm font-bold text-ink-800">Mistake DNA</h3>
+        </div>
+        <span className="text-xs font-bold text-ink-500">{total} total</span>
       </div>
 
       {/* Stacked bar */}
-      <div className="flex h-3 rounded-full overflow-hidden mb-3">
+      <div className="flex h-4 rounded-full overflow-hidden mb-3">
         {byType.map((t) => (
           <div
             key={t.type}
@@ -61,8 +72,8 @@ export function MistakeDNA({ total, byType }: MistakeDNAProps) {
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {byType.map((t) => (
           <div key={t.type} className="flex items-center gap-1.5 text-xs text-ink-600">
-            <span className={clsx("h-2.5 w-2.5 rounded-sm", TYPE_COLORS[t.type] ?? "bg-ink-200")} />
-            {TYPE_LABELS[t.type] ?? t.type}
+            <span className={clsx("h-3 w-3 rounded-md", TYPE_COLORS[t.type] ?? "bg-ink-200")} />
+            <span className="font-medium">{TYPE_LABELS[t.type] ?? t.type}</span>
             <span className="text-ink-400">({Math.round(t.pct)}%)</span>
           </div>
         ))}

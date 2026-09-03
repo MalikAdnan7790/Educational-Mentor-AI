@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import { Map, Loader2 } from "lucide-react";
 
 interface SubjectOverview {
   key: string;
@@ -63,17 +64,22 @@ export function LearningPathCard() {
   }
 
   return (
-    <div className="card p-6">
+    <div className="rounded-2xl border-2 border-ink-100 bg-white p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="text-sm font-semibold text-ink-900">My Learning Path</h3>
-          <p className="mt-0.5 text-xs text-ink-500">
-            Built from your real scores — foundations first, never skipping weak prerequisites.
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/15">
+            <Map className="h-5 w-5 text-purple-500" />
+          </div>
+          <div>
+            <h3 className="text-sm font-extrabold text-ink-900">My Learning Path</h3>
+            <p className="mt-0.5 text-xs text-ink-500">
+              Built from your real scores — foundations first, never skipping weak prerequisites.
+            </p>
+          </div>
         </div>
         {subjects.length > 0 && (
           <select
-            className="input max-w-[180px] py-1.5 text-xs"
+            className="input max-w-[180px] rounded-xl py-1.5 text-xs font-medium"
             value={selected}
             onChange={(e) => {
               setSelected(e.target.value);
@@ -96,22 +102,22 @@ export function LearningPathCard() {
       )}
 
       {subjects.length > 0 && !path && (
-        <button onClick={buildPath} disabled={loading} className="btn-primary mt-4">
-          {loading ? "Building your path…" : "Build my learning path"}
+        <button onClick={buildPath} disabled={loading} className="btn-primary mt-4 rounded-xl">
+          {loading ? "Building your path..." : "Build my learning path"}
         </button>
       )}
 
-      {error && <p className="mt-3 text-xs text-coral-500">{error}</p>}
+      {error && <p className="mt-3 text-xs font-medium text-coral-500">{error}</p>}
 
       {path && (
         <div className="mt-4 space-y-4">
           <div>
-            <span className="chip bg-mint-500/15 text-mint-700">{path.currentLevel}</span>
-            <h4 className="mt-2 text-sm font-semibold text-ink-900">
+            <span className="rounded-full bg-mint-400/15 px-3 py-1 text-xs font-bold text-mint-600">{path.currentLevel}</span>
+            <h4 className="mt-2 text-sm font-bold text-ink-900">
               Working on now: {path.currentTopic}
             </h4>
             {path.weakPrerequisite && (
-              <p className="mt-1 rounded-lg border border-amber-400/40 bg-amber-400/10 p-2.5 text-xs text-amber-700">
+              <p className="mt-1 rounded-xl border-2 border-amber-400/40 bg-amber-400/10 p-2.5 text-xs font-medium text-amber-700">
                 Fix this first: {path.weakPrerequisite} — your foundation needs repair before
                 advancing.
               </p>
@@ -119,36 +125,41 @@ export function LearningPathCard() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-ink-100 p-3">
-              <h5 className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+            <div className="rounded-xl border-2 border-ink-100 p-3">
+              <h5 className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
                 Practice today
               </h5>
-              <p className="mt-1 text-xs leading-relaxed text-ink-700">{path.practice}</p>
+              <p className="mt-1 text-xs font-medium leading-relaxed text-ink-700">{path.practice}</p>
             </div>
-            <div className="rounded-xl border border-ink-100 p-3">
-              <h5 className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+            <div className="rounded-xl border-2 border-ink-100 p-3">
+              <h5 className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
                 Then
               </h5>
-              <p className="mt-1 text-xs leading-relaxed text-ink-700">{path.nextTopic}</p>
+              <p className="mt-1 text-xs font-medium leading-relaxed text-ink-700">{path.nextTopic}</p>
             </div>
-            <div className="rounded-xl border border-ink-100 p-3">
-              <h5 className="text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+            <div className="rounded-xl border-2 border-ink-100 p-3">
+              <h5 className="text-[10px] font-bold uppercase tracking-wide text-ink-400">
                 Stretch challenge
               </h5>
-              <p className="mt-1 text-xs leading-relaxed text-ink-700">{path.challenge}</p>
+              <p className="mt-1 text-xs font-medium leading-relaxed text-ink-700">{path.challenge}</p>
             </div>
           </div>
 
-          <p className="text-xs leading-relaxed text-ink-500">
-            <strong className="text-ink-700">Why this order:</strong> {path.rationale}
+          <p className="text-xs font-medium leading-relaxed text-ink-500">
+            <strong className="font-bold text-ink-700">Why this order:</strong> {path.rationale}
           </p>
 
           <button
             onClick={buildPath}
             disabled={loading}
-            className={clsx("btn-ghost text-xs", loading && "opacity-50")}
+            className={clsx("btn-ghost text-xs rounded-xl", loading && "opacity-50")}
           >
-            {loading ? "Rebuilding…" : "Rebuild path"}
+            {loading ? (
+              <span className="flex items-center gap-1.5">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Rebuilding...
+              </span>
+            ) : "Rebuild path"}
           </button>
         </div>
       )}

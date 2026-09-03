@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import { StickyNote, FileText } from "lucide-react";
 import { NoteUpload, type UploadedNote } from "@/components/notes/note-upload";
 
 interface NoteListItem {
@@ -127,17 +128,27 @@ export default function NotesPage() {
 
   return (
     <div className="space-y-6">
-      <section>
-        <h1 className="text-2xl font-bold text-ink-900">My Notes</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          Upload your study material (PDF, DOCX, TXT, MD). Your AI teacher summarizes it, makes
-          flashcards, quizzes you on it — and prioritizes it when you ask questions in chat.
-        </p>
+      <section className="flex items-start gap-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/15 text-amber-500">
+          <StickyNote className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold text-ink-900">My Notes</h1>
+          <p className="mt-1 text-sm text-ink-500">
+            Upload your study material (PDF, DOCX, TXT, MD). Your AI teacher summarizes it, makes
+            flashcards, quizzes you on it — and prioritizes it when you ask questions in chat.
+          </p>
+        </div>
       </section>
 
       {/* Upload */}
-      <section className="card p-5">
-        <h2 className="text-sm font-semibold text-ink-900">Upload study material</h2>
+      <section className="rounded-2xl border-2 border-ink-100 bg-white p-5">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-400/15 text-sky-500">
+            <FileText className="h-4 w-4" />
+          </div>
+          <h2 className="text-sm font-bold text-ink-900">Upload study material</h2>
+        </div>
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <NoteUpload
             onLoaded={(n) => {
@@ -179,7 +190,7 @@ export default function NotesPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
         {/* List */}
         <section className="space-y-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">
             {loading ? "Loading…" : `${notes.length} note${notes.length === 1 ? "" : "s"}`}
           </h2>
           {!loading && notes.length === 0 && (
@@ -192,9 +203,9 @@ export default function NotesPage() {
               key={n.id}
               onClick={() => setSelectedId(n.id)}
               className={clsx(
-                "w-full rounded-xl border p-3 text-left transition-colors",
+                "w-full rounded-2xl border-2 p-3 text-left transition-colors",
                 selectedId === n.id
-                  ? "border-ink-900 bg-ink-50"
+                  ? "border-mint-400 bg-mint-50"
                   : "border-ink-100 bg-white hover:border-ink-300",
               )}
             >
@@ -219,14 +230,14 @@ export default function NotesPage() {
             </div>
           )}
           {selectedId && detailLoading && (
-            <div className="card p-10 text-center text-sm text-ink-500">Loading note…</div>
+            <div className="rounded-2xl border-2 border-ink-100 bg-white p-10 text-center text-sm text-ink-500">Loading note…</div>
           )}
           {detail && (
             <div className="space-y-5">
-              <div className="card p-5">
+              <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-lg font-semibold text-ink-900">{detail.title}</h2>
+                    <h2 className="text-lg font-bold text-ink-900">{detail.title}</h2>
                     <span className="text-xs text-ink-400">
                       {detail.sourceType} · {detail.charCount.toLocaleString()} characters
                     </span>
@@ -250,8 +261,8 @@ export default function NotesPage() {
               </div>
 
               {detail.keyPoints.length > 0 && (
-                <div className="card p-5">
-                  <h3 className="text-sm font-semibold text-ink-900">Key points</h3>
+                <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
+                  <h3 className="text-sm font-bold text-ink-900">Key points</h3>
                   <ul className="mt-2 space-y-1.5">
                     {detail.keyPoints.map((k, i) => (
                       <li key={i} className="flex gap-2 text-sm text-ink-700">
@@ -264,8 +275,8 @@ export default function NotesPage() {
               )}
 
               {detail.flashcards.length > 0 && (
-                <div className="card p-5">
-                  <h3 className="text-sm font-semibold text-ink-900">
+                <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
+                  <h3 className="text-sm font-bold text-ink-900">
                     Flashcards <span className="font-normal text-ink-400">— tap to flip</span>
                   </h3>
                   <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -290,8 +301,8 @@ export default function NotesPage() {
                 </div>
               )}
 
-              <details className="card p-5">
-                <summary className="cursor-pointer text-sm font-semibold text-ink-900">
+              <details className="rounded-2xl border-2 border-ink-100 bg-white p-5">
+                <summary className="cursor-pointer text-sm font-bold text-ink-900">
                   View full note text
                 </summary>
                 <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap text-xs leading-relaxed text-ink-600">
