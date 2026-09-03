@@ -70,7 +70,7 @@ export const createConversationSchema = z.object({
 
 export const sendMessageSchema = z
   .object({
-    content: z.string().max(4000).default(""),
+    content: z.string().max(60_000).default(""),
     imageBase64: z.string().max(10_000_000).optional(),
     teacherAction: z.enum(["HINT", "GUIDE", "CHECK", "MISTAKE", "CONCEPT", "SOLUTION"]).optional(),
   })
