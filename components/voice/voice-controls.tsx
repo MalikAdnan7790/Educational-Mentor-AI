@@ -19,7 +19,7 @@ interface VoiceControlsProps {
   onPresetChange: (preset: string) => void;
 }
 
-const RATES = [0.75, 1, 1.25, 1.5];
+const RATES = [0.75, 1, 1.25, 1.5, 1.75, 2];
 
 export function VoiceControls({
   rate,

@@ -17,9 +17,9 @@ export async function POST(req: Request) {
 
   const { text, preset, speed } = body;
 
-  if (!text || typeof text !== "string" || text.length > 5000) {
+  if (!text || typeof text !== "string" || text.length > 50000) {
     return NextResponse.json(
-      { error: "text must be 1-5000 characters" },
+      { error: "text must be 1-50000 characters" },
       { status: 400 },
     );
   }

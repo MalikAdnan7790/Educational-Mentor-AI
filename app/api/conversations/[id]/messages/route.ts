@@ -13,6 +13,7 @@ import type { LearningMode, LanguagePref, EducationLevel } from "@/types/prisma-
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const student = await getSessionStudent();

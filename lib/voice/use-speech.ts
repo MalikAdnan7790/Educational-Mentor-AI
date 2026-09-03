@@ -42,6 +42,21 @@ function findVoice(language: string): { voice: SpeechSynthesisVoice | null; hasU
   return { voice: english ?? null, hasUrdu };
 }
 
+function stripMarkdownForSpeech(text: string): string {
+  return text
+    .replace(/```[\s\S]*?```/g, " code block omitted. ")
+    .replace(/`([^`]+)`/g, "$1. ")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[([^\]]+)\]\(.*?\)/g, "$1")
+    .replace(/#{1,6}\s*/g, "")
+    .replace(/[*_~]{1,3}/g, "")
+    .replace(/>\s*/g, "")
+    .replace(/[-*+]\s+/g, "")
+    .replace(/\n{2,}/g, ". ")
+    .replace(/\n/g, " ")
+    .trim();
+}
+
 function speakBrowser(
   text: string,
   voice: SpeechSynthesisVoice | null,
@@ -50,10 +65,16 @@ function speakBrowser(
   onEnd: () => void,
   onError: (err: string) => void,
 ) {
-  const sentences = text
+  const cleaned = stripMarkdownForSpeech(text);
+  const sentences = cleaned
     .split(/(?<=[.!?۔])\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
+
+  if (sentences.length === 0) {
+    onEnd();
+    return;
+  }
 
   let idx = 0;
 

@@ -35,6 +35,32 @@ export async function streamMessage(
 
   const decoder = new TextDecoder();
   let buffer = "";
+  let accumulated = "";
+  let doneReceived = false;
+
+  function processLine(trimmed: string) {
+    if (!trimmed.startsWith("data: ")) return;
+    const jsonStr = trimmed.slice(6);
+    let data: Record<string, unknown>;
+    try {
+      data = JSON.parse(jsonStr);
+    } catch {
+      return; // Partial JSON — will be completed in next chunk
+    }
+    if (typeof data.delta === "string" && data.delta) {
+      accumulated += data.delta;
+      callbacks.onDelta(data.delta);
+    }
+    if (data.done) {
+      doneReceived = true;
+      const text = typeof data.text === "string" ? data.text : accumulated;
+      const messageId = typeof data.messageId === "string" ? data.messageId : undefined;
+      callbacks.onDone(text, messageId);
+    }
+    if (typeof data.error === "string" && data.error) {
+      callbacks.onError(data.error);
+    }
+  }
 
   try {
     while (true) {
@@ -46,22 +72,27 @@ export async function streamMessage(
       buffer = lines.pop() ?? "";
 
       for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith("data: ")) continue;
-
-        const jsonStr = trimmed.slice(6);
-        try {
-          const data = JSON.parse(jsonStr);
-          if (data.delta) callbacks.onDelta(data.delta);
-          if (data.done) callbacks.onDone(data.text ?? "", data.messageId);
-          if (data.error) callbacks.onError(data.error);
-        } catch {
-          // Partial JSON — will be completed in next chunk
-        }
+        processLine(line.trim());
       }
+    }
+
+    // Process any remaining data in the buffer
+    if (buffer.trim()) {
+      processLine(buffer.trim());
+    }
+
+    // If the stream ended without a done event, commit whatever we accumulated
+    if (!doneReceived && !signal?.aborted) {
+      callbacks.onDone(accumulated);
     }
   } catch (err) {
     if (signal?.aborted) return;
-    callbacks.onError("stream_interrupted");
+    if (doneReceived) return;
+    // If we have accumulated text, commit it rather than showing an error
+    if (accumulated) {
+      callbacks.onDone(accumulated);
+    } else {
+      callbacks.onError("stream_interrupted");
+    }
   }
 }

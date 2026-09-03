@@ -138,9 +138,11 @@ export async function streamMentorReply(
       messages,
       stream: true,
       temperature: 0.7,
-      // Gemini's OpenAI-compatible endpoint bills hidden thinking tokens against
-      // max_tokens; a low cap makes short answers come back empty.
-      max_tokens: 4000,
+      // Generous ceiling so detailed educational answers are never cut off.
+      // Gemini's OpenAI-compatible endpoint may bill hidden thinking tokens
+      // against this limit, so it needs to be high enough for both thinking
+      // and output.
+      max_tokens: 16384,
     });
   } catch (err) {
     throw toAIError(err);
