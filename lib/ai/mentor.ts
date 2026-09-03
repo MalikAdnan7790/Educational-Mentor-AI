@@ -1,8 +1,11 @@
 import { getOpenAI, getModel, chatCompletion } from "./client";
-import { buildSystemPrompt } from "./prompts";
+import { buildSystemPrompt, type PedagogicalMode } from "./prompts";
 import { prisma } from "@/lib/db";
 import { retrieveNoteContext } from "@/lib/rag";
-import type { LearningMode, LanguagePref, EducationLevel } from "@prisma/client";
+import { getRelevantMemories } from "./memory";
+import { toAIError } from "./errors";
+import { teacherProfileCache } from "@/lib/cache";
+import type { LearningMode, LanguagePref, EducationLevel } from "@/types/prisma-enums";
 
 const META_SENTINEL = "<<<META>>>";
 
@@ -20,6 +23,7 @@ interface MentorStreamOpts {
   teacherActionDirective?: string | null;
   hintLevel?: number;
   wasFullExplanation?: boolean;
+  pedagogicalMode?: PedagogicalMode | null;
 }
 
 export interface MentorMeta {
@@ -44,7 +48,8 @@ export async function streamMentorReply(
   const history = await prisma.message.findMany({
     where: { conversationId: opts.conversationId },
     orderBy: { createdAt: "asc" },
-    take: 20,
+    take: 10,
+    select: { role: true, content: true },
   });
 
   const messages: ({ role: "system" | "user" | "assistant"; content: string } | {
@@ -53,13 +58,23 @@ export async function streamMentorReply(
   })[] = [];
 
   // System prompt
-  const teacherProfile = opts.subjectKey
-    ? await prisma.teacherProfile.findFirst({
-        where: { subject: { key: opts.subjectKey } },
-      })
-    : null;
+  const cacheKey = opts.subjectKey ? `tp:${opts.subjectKey}` : null;
+  type TeacherProfileRow = { id: string; subjectId: string | null; category: string | null; style: string; focusJson: string; commonMistakesJson: string; examplesJson: string; rulesJson: string; createdAt: Date };
+  let teacherProfile: TeacherProfileRow | null = null;
+  if (cacheKey) {
+    const cached = teacherProfileCache.get<TeacherProfileRow>(cacheKey);
+    if (cached) {
+      teacherProfile = cached;
+    } else {
+      const profile = await prisma.teacherProfile.findFirst({
+        where: { subject: { key: opts.subjectKey! } },
+      });
+      if (profile) teacherProfileCache.set(cacheKey, profile);
+      teacherProfile = profile ?? null;
+    }
+  }
 
-  const studentContext = await buildStudentContext(opts.studentId);
+  const studentContext = await buildStudentContext(opts.studentId, opts.topic);
 
   // Knowledge-base retrieval: when the student's uploaded notes are relevant
   // to the current question, they take priority over general knowledge.
@@ -79,13 +94,14 @@ export async function streamMentorReply(
     teacherCommonMistakes: safeJsonParse(teacherProfile?.commonMistakesJson),
     subjectKey: opts.subjectKey,
     topic: opts.topic,
+    pedagogicalMode: opts.pedagogicalMode,
     studentContext,
   });
 
   messages.push({ role: "system", content: noteContext ? `${systemPrompt}\n\n${noteContext}` : systemPrompt });
 
   // History (strip META sentinels, truncate to 2000 chars each)
-  for (const msg of history.slice(-10)) {
+  for (const msg of history) {
     const content = stripMeta(msg.content).slice(0, 2000);
     if (msg.role === "USER") {
       messages.push({ role: "user", content });
@@ -97,7 +113,10 @@ export async function streamMentorReply(
   // Current user message (multimodal when an image is attached).
   // A teacher-action directive steers the reply without being persisted.
   const imageDataUrl = normalizeImageDataUrl(opts.imageBase64);
-  const userText = [opts.teacherActionDirective, opts.userMessage || "Please look at this image and help me."]
+  const uploadDirective = imageDataUrl && !opts.teacherActionDirective
+    ? "The student uploaded an image of a question or problem. Don't just solve it for them. First, ask what they understand about the question. Then guide them step by step to work through it themselves."
+    : null;
+  const userText = [uploadDirective, opts.teacherActionDirective, opts.userMessage || "Please look at this image and help me."]
     .filter(Boolean)
     .join("\n\n");
   if (imageDataUrl) {
@@ -124,10 +143,7 @@ export async function streamMentorReply(
       max_tokens: 4000,
     });
   } catch (err) {
-    const detail = err instanceof Error ? err.message : "unknown error";
-    return (async function* () {
-      yield `I'm sorry, I encountered an issue connecting to the AI service. Please try again in a moment. (${detail})`;
-    })();
+    throw toAIError(err);
   }
 
   return (async function* () {
@@ -176,8 +192,8 @@ function safeJsonParse<T>(raw: string | null | undefined): T | undefined {
   }
 }
 
-async function buildStudentContext(studentId: string) {
-  const [topKnowledge, topMistakes] = await Promise.all([
+async function buildStudentContext(studentId: string, topic?: string | null) {
+  const [topKnowledge, topMistakes, memories] = await Promise.all([
     prisma.knowledgeRecord.findMany({
       where: { studentId },
       orderBy: { masteryPct: "desc" },
@@ -190,12 +206,14 @@ async function buildStudentContext(studentId: string) {
       take: 5,
       select: { mistakeType: true, occurrences: true, description: true },
     }),
+    getRelevantMemories(studentId, topic),
   ]);
 
-  if (topKnowledge.length === 0 && topMistakes.length === 0) return undefined;
+  if (topKnowledge.length === 0 && topMistakes.length === 0 && memories.length === 0) return undefined;
 
   return {
     topKnowledge: topKnowledge.length > 0 ? topKnowledge : undefined,
     topMistakes: topMistakes.length > 0 ? topMistakes : undefined,
+    teacherMemories: memories.length > 0 ? memories : undefined,
   };
 }

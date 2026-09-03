@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { getSessionStudent } from "@/lib/auth";
 import { generateChallenge, nextAdaptiveDifficulty } from "@/lib/ai/challenge";
 import { challengeCreateSchema } from "@/lib/validation";
-import type { Difficulty } from "@prisma/client";
+import type { Difficulty } from "@/types/prisma-enums";
 
 export const dynamic = "force-dynamic";
 
@@ -28,9 +28,9 @@ export async function POST(req: Request) {
     if (source.status !== "GRADED" || source.score == null) {
       return NextResponse.json({ error: "not_graded" }, { status: 400 });
     }
-    const next = nextAdaptiveDifficulty(source.difficulty, source.score);
+    const next = nextAdaptiveDifficulty(source.difficulty as Difficulty, source.score);
     const harder = (["EASY", "MEDIUM", "HARD", "REAL_WORLD"] as Difficulty[]).indexOf(next) >
-      (["EASY", "MEDIUM", "HARD", "REAL_WORLD"] as Difficulty[]).indexOf(source.difficulty);
+      (["EASY", "MEDIUM", "HARD", "REAL_WORLD"] as Difficulty[]).indexOf(source.difficulty as Difficulty);
     return createChallenge(
       student,
       source.subjectKey,

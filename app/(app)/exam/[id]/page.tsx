@@ -8,7 +8,7 @@ import clsx from "clsx";
 interface ExamQuestionView {
   id: string;
   order: number;
-  type: "MCQ" | "TRUE_FALSE" | "SHORT_ANSWER" | "CONCEPTUAL" | "CODE";
+  type: "MCQ" | "TRUE_FALSE" | "SHORT_ANSWER" | "CONCEPT" | "SCENARIO" | "CODING";
   question: string;
   options: string[] | null;
   points: number;
@@ -276,8 +276,11 @@ export default function ExamDetailPage() {
                   </div>
                 ) : (
                   <textarea
-                    className="input min-h-[80px] w-full"
-                    placeholder="Write your answer…"
+                    className={clsx(
+                      "input w-full",
+                      q.type === "CODING" ? "min-h-[160px] font-mono text-[13px] bg-ink-50" : "min-h-[80px]",
+                    )}
+                    placeholder={q.type === "CODING" ? "Write your code here…" : "Write your answer…"}
                     value={answers[q.id] ?? ""}
                     onChange={(e) => setAnswers((a) => ({ ...a, [q.id]: e.target.value }))}
                     maxLength={4000}

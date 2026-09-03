@@ -3,10 +3,20 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { createAuthSession } from "@/lib/auth";
 import { loginSchema } from "@/lib/validation";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "unknown";
+  const rl = checkRateLimit(`login:${ip}`, "auth");
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "rate_limited", message: "Too many login attempts. Please wait a moment." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } },
+    );
+  }
+
   try {
     const parsed = loginSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {

@@ -4,7 +4,12 @@ import { getSessionStudent } from "@/lib/auth";
 import { sendMessageSchema } from "@/lib/validation";
 import { streamMentorReply } from "@/lib/ai/mentor";
 import { detect } from "@/lib/ai/detect";
+import { extractMemories } from "@/lib/ai/memory";
+import { updateStudyStreak } from "@/lib/streak";
+import { AIError, errorCardMessage } from "@/lib/ai/errors";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getTeacherAction } from "@/lib/teacher-actions";
+import type { LearningMode, LanguagePref, EducationLevel } from "@/types/prisma-enums";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,6 +17,14 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const student = await getSessionStudent();
   if (!student) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const rl = checkRateLimit(`msg:${student.id}`, "chat");
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "rate_limited", message: "Too many messages. Please wait a moment." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } },
+    );
+  }
 
   const parsed = sendMessageSchema.safeParse(await req.json());
   if (!parsed.success) {
@@ -28,17 +41,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   const { content, imageBase64, teacherAction } = parsed.data;
 
-  // Turn-1 detection: auto-detect subject/topic/language if not set
+  // Turn-1 detection: auto-detect subject/topic/language/pedagogicalMode if not set
   const messageCount = await prisma.message.count({ where: { conversationId: conversation.id } });
   let subjectKey = conversation.subjectKey;
   let topic = conversation.topic;
   let language = conversation.language;
+  let pedagogicalMode = conversation.pedagogicalMode;
 
   if (messageCount === 0) {
     const detection = await detect(content);
     if (!subjectKey && detection.subjectKey) subjectKey = detection.subjectKey;
     if (!topic && detection.topic) topic = detection.topic;
     if (detection.language) language = detection.language as typeof language;
+    if (!pedagogicalMode && detection.pedagogicalMode) pedagogicalMode = detection.pedagogicalMode;
 
     // Update conversation with detected values
     await prisma.conversation.update({
@@ -47,6 +62,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         subjectKey: subjectKey ?? conversation.subjectKey,
         topic: topic ?? conversation.topic,
         language,
+        pedagogicalMode: pedagogicalMode ?? conversation.pedagogicalMode,
         title: conversation.title ?? content.slice(0, 80),
       },
     });
@@ -78,17 +94,24 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     stream = await streamMentorReply({
       conversationId: conversation.id,
       studentId: student.id,
-      mode: conversation.mode,
-      language,
+      mode: conversation.mode as LearningMode,
+      language: language as LanguagePref,
       isAiFree: conversation.isAiFree,
       subjectKey,
       topic,
-      educationLevel: student.educationLevel,
+      educationLevel: student.educationLevel as EducationLevel,
       userMessage: content,
       imageBase64: imageBase64 ?? null,
       teacherActionDirective: teacherAction ? getTeacherAction(teacherAction)?.directive ?? null : null,
+      pedagogicalMode: pedagogicalMode as any,
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof AIError) {
+      return NextResponse.json(
+        { error: err.code, message: errorCardMessage(err.code) },
+        { status: err.retryable ? 503 : 400 },
+      );
+    }
     return NextResponse.json(
       { error: "ai_unavailable", message: "AI mentor is temporarily unavailable. Please try again." },
       { status: 503 },
@@ -111,7 +134,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         const cleanText = stripMeta(fullText);
 
         // Persist teacher message
-        await prisma.message.create({
+        const teacherMsg = await prisma.message.create({
           data: {
             conversationId: conversation.id,
             role: "ASSISTANT",
@@ -128,7 +151,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
           data: { messageCount: { increment: 1 } },
         });
 
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, text: cleanText })}\n\n`));
+        // Non-blocking: extract memories from conversation for cross-session context
+        void extractMemories(student.id, conversation.id);
+        void updateStudyStreak(student.id);
+
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, text: cleanText, messageId: teacherMsg.id })}\n\n`));
         controller.close();
       } catch (err) {
         controller.enqueue(

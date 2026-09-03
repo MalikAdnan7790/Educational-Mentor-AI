@@ -12,12 +12,14 @@
 
 import type {
   Attempt,
+  Problem,
+} from "@prisma/client";
+import type {
   Difficulty,
   LearningMode,
   MistakeType,
-  Problem,
   ReasoningQuality,
-} from "@prisma/client";
+} from "@/types/prisma-enums";
 
 export const HINT_LEVELS = {
   NONE: 0,

@@ -13,6 +13,7 @@ import { ErrorJournal } from "@/components/dashboard/error-journal";
 import { LearningDna } from "@/components/dashboard/learning-dna";
 import { MasteryStages } from "@/components/dashboard/mastery-stages";
 import { LearningPathCard } from "@/components/dashboard/learning-path-card";
+import { StudyStreakCard } from "@/components/dashboard/study-streak-card";
 import type { IndependenceMetrics } from "@/lib/scoring";
 
 interface Achievement {
@@ -47,6 +48,14 @@ interface NextAction {
   why: string;
   estMinutes: number;
   actionType: string;
+}
+
+interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lessonsCompleted: number;
+  roadmapsActive: number;
+  conversationsTotal: number;
 }
 
 interface LearningDnaData {
@@ -97,11 +106,12 @@ export default function DashboardPage() {
   const [kcData, setKcData] = useState<KCData | null>(null);
   const [nextAction, setNextAction] = useState<NextAction | null>(null);
   const [dnaData, setDnaData] = useState<LearningDnaData | null>(null);
+  const [streakData, setStreakData] = useState<StreakData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const [mRes, aRes, dRes, dnaRes, kcRes, naRes, ldnaRes] = await Promise.all([
+      const [mRes, aRes, dRes, dnaRes, kcRes, naRes, ldnaRes, streakRes] = await Promise.all([
         fetch("/api/independence"),
         fetch("/api/achievements"),
         fetch("/api/analytics/ai-dependency"),
@@ -109,6 +119,7 @@ export default function DashboardPage() {
         fetch("/api/analytics/knowledge-confidence"),
         fetch("/api/next-action"),
         fetch("/api/analytics/learning-dna"),
+        fetch("/api/analytics/streak"),
       ]);
       if (mRes.ok) setMetrics(await mRes.json());
       if (aRes.ok) setAchievements(await aRes.json());
@@ -120,6 +131,7 @@ export default function DashboardPage() {
         if (data?.id) setNextAction(data);
       }
       if (ldnaRes.ok) setDnaData(await ldnaRes.json());
+      if (streakRes.ok) setStreakData(await streakRes.json());
       setLoading(false);
     })();
   }, []);
@@ -135,8 +147,22 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-ink-500">Loading dashboard…</p>
+      <div className="space-y-6">
+        <div>
+          <div className="skeleton h-7 w-40" />
+          <div className="skeleton mt-2 h-4 w-64" />
+        </div>
+        <div className="skeleton h-28 w-full" />
+        <div className="skeleton h-20 w-full" />
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="skeleton h-48 w-full" />
+          <div className="skeleton h-48 w-full" />
+        </div>
+        <div className="skeleton h-32 w-full" />
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="skeleton h-40 w-full" />
+          <div className="skeleton h-40 w-full" />
+        </div>
       </div>
     );
   }
@@ -160,6 +186,9 @@ export default function DashboardPage() {
           onComplete={completeAction}
         />
       )}
+
+      {/* Study Streak + Activity */}
+      {streakData && <StudyStreakCard data={streakData} />}
 
       {/* Independence + AI Dependency */}
       <div className="grid gap-6 md:grid-cols-2">

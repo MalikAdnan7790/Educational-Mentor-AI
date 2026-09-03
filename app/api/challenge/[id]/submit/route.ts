@@ -4,6 +4,7 @@ import { getSessionStudent } from "@/lib/auth";
 import { challengeSubmitSchema } from "@/lib/validation";
 import { gradeChallenge, nextAdaptiveDifficulty } from "@/lib/ai/challenge";
 import { applyMasteryEvidence } from "@/lib/analytics";
+import type { Difficulty } from "@/types/prisma-enums";
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +63,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
   }
 
-  const adaptiveNext = nextAdaptiveDifficulty(challenge.difficulty, grade.score);
+  const adaptiveNext = nextAdaptiveDifficulty(challenge.difficulty as Difficulty, grade.score);
 
   return NextResponse.json({ ...grade, confidenceNote, adaptiveNext });
 }

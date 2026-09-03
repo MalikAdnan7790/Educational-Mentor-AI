@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionStudent } from "@/lib/auth";
-import type { Difficulty, Subject } from "@prisma/client";
+import type { Difficulty, Subject } from "@/types/prisma-enums";
 
 export const dynamic = "force-dynamic";
 

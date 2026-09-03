@@ -17,3 +17,5 @@ prisma/*.db-wal
 prisma/*.db-shm
 cookies.txt
 dev-server.log
+
+.vercel

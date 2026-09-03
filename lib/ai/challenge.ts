@@ -6,7 +6,7 @@ import {
   challengeGradeResponseSchema,
   challengeGradeJsonSchema,
 } from "./schemas";
-import type { Difficulty } from "@prisma/client";
+import type { Difficulty } from "@/types/prisma-enums";
 
 export interface ChallengeGenResult {
   problemText: string;

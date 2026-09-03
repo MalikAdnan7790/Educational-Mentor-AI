@@ -10,7 +10,7 @@ import {
   analyzeAttempt as mockAnalyze,
   generateHint as mockGenerateHint,
 } from "@/lib/independent-engine";
-import type { MistakeType, ReasoningQuality } from "@prisma/client";
+import type { MistakeType, ReasoningQuality } from "@/types/prisma-enums";
 
 const MAX_RETRIES_BEFORE_REVEAL = 4;
 

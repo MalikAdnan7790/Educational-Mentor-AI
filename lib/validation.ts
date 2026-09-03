@@ -60,6 +60,7 @@ export const finishSessionSchema = z.object({
 export const createConversationSchema = z.object({
   kind: z.enum(["VOICE", "TEXT"]).default("TEXT"),
   mode: z.enum(["DEPENDENT", "GUIDED", "ADAPTIVE", "INDEPENDENT"]).default("GUIDED"),
+  pedagogicalMode: z.enum(["EXPLAIN", "PRACTICE", "HINT", "QUIZ", "EXAM", "STEP_SOLVER", "TEACHER_CHAT", "REVISION"]).optional(),
   isAiFree: z.boolean().default(false),
   language: z.enum(["EN", "UR", "ROMAN_UR"]).default("EN"),
   subjectKey: z.string().max(100).optional(),
@@ -171,6 +172,15 @@ export const teachEvaluateSchema = z.object({
 export const explainAnswerSubmitSchema = z.object({
   attemptId: z.string().cuid().optional(),
   explanation: z.string().min(5).max(8000),
+});
+
+export const messageFeedbackSchema = z.object({
+  rating: z.enum(["UP", "DOWN"]),
+  category: z.enum([
+    "INCORRECT", "UNHELPFUL", "TOO_LONG", "TOO_COMPLEX", "TOO_SIMPLE",
+    "MISSING_CONTEXT", "GOOD", "GREAT_EXPLANATION", "OTHER",
+  ]).optional(),
+  comment: z.string().max(500).optional(),
 });
 
 export const challengeCreateSchema = z.object({

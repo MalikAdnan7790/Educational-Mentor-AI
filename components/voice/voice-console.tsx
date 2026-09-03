@@ -44,6 +44,7 @@ export function VoiceConsole({
   const [error, setError] = useState<string | null>(null);
   const [rate, setRate] = useState(initialRate);
   const [isMuted, setIsMuted] = useState(false);
+  const [voicePreset, setVoicePreset] = useState("FRIENDLY");
   const lastReplyRef = useRef<string>("");
   const abortRef = useRef<AbortController | null>(null);
 
@@ -127,21 +128,24 @@ export function VoiceConsole({
 
   const {
     isSpeaking,
+    isPaused,
     speak,
     cancel: cancelSpeech,
+    pause,
+    resume,
+    replay: hookReplay,
     supported: ttsSupported,
     hasUrduVoice,
   } = useSpeech({
     language: bcpLang,
     rate,
+    preset: voicePreset,
     onEnd: () => {
-      // Resume listening after TTS finishes (with short delay)
       setTimeout(() => {
         setState("idle");
       }, 250);
     },
-    onError: (err) => {
-      // TTS errors are non-fatal — just go to idle
+    onError: () => {
       setState("idle");
     },
   });
@@ -170,9 +174,9 @@ export function VoiceConsole({
   const handleReplay = useCallback(() => {
     if (lastReplyRef.current && !isMuted) {
       cancelSpeech();
-      speak(lastReplyRef.current);
+      hookReplay();
     }
-  }, [isMuted, cancelSpeech, speak]);
+  }, [isMuted, cancelSpeech, hookReplay]);
 
   const avatarState =
     state === "listening" ? "listening"
@@ -217,6 +221,12 @@ export function VoiceConsole({
         onToggleMute={() => setIsMuted((m) => !m)}
         onReplay={handleReplay}
         canReplay={!!lastReplyRef.current}
+        isSpeaking={isSpeaking}
+        isPaused={isPaused}
+        onPause={pause}
+        onResume={resume}
+        preset={voicePreset}
+        onPresetChange={setVoicePreset}
       />
 
       {/* Transcript */}

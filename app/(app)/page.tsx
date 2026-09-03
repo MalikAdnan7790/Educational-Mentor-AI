@@ -87,8 +87,24 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-ink-500">Loading…</p>
+      <div className="space-y-10">
+        <section className="text-center py-4">
+          <div className="skeleton mx-auto h-8 w-64" />
+          <div className="skeleton mx-auto mt-3 h-4 w-80" />
+        </section>
+        <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="skeleton h-28 w-full" />
+          ))}
+        </section>
+        <section>
+          <div className="skeleton h-6 w-48 mb-4" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="skeleton h-48 w-full" />
+            ))}
+          </div>
+        </section>
       </div>
     );
   }
@@ -190,8 +206,16 @@ export default function HomePage() {
             />
           ))}
           {filtered.length === 0 && (
-            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 p-10 text-center text-sm text-ink-500">
-              No problems match your filters.
+            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 p-10 text-center">
+              <div className="text-3xl mb-2">📝</div>
+              <p className="text-sm font-medium text-ink-700">No problems match your filters</p>
+              <p className="mt-1 text-xs text-ink-500">
+                Try a different subject or difficulty, or{" "}
+                <Link href="/ask" className="text-mint-600 underline hover:text-mint-500">
+                  ask a question directly
+                </Link>
+                .
+              </p>
             </div>
           )}
         </div>

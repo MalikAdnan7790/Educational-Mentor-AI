@@ -4,6 +4,8 @@ import { detectResponseSchema, detectJsonSchema } from "./schemas";
 import { detectLanguage } from "@/lib/language";
 import { prisma } from "@/lib/db";
 
+import type { PedagogicalMode } from "./prompts";
+
 export interface DetectionResult {
   language: "EN" | "UR" | "ROMAN_UR";
   educationLevel: "SCHOOL" | "COLLEGE" | "UNIVERSITY" | "PROFESSIONAL" | null;
@@ -11,6 +13,7 @@ export interface DetectionResult {
   topic: string | null;
   intent: "ASK" | "PRACTICE" | "EXPLAIN" | "CHAT";
   difficulty: "EASY" | "MEDIUM" | "HARD" | null;
+  pedagogicalMode: PedagogicalMode | null;
 }
 
 export async function detect(message: string): Promise<DetectionResult> {
@@ -25,6 +28,7 @@ export async function detect(message: string): Promise<DetectionResult> {
       topic: null,
       intent: "ASK",
       difficulty: null,
+      pedagogicalMode: null,
     };
   }
 
@@ -41,6 +45,16 @@ export async function detect(message: string): Promise<DetectionResult> {
 4. topic: a specific subtopic, or null
 5. intent: ASK (asking a question), PRACTICE (wants problems), EXPLAIN (wants explanation), CHAT (casual)
 6. difficulty: EASY, MEDIUM, HARD (or null)
+7. pedagogicalMode: Infer the best teaching mode from the student's intent:
+   - EXPLAIN: "explain X", "what is X", "help me understand"
+   - PRACTICE: "give me problems", "let me practice"
+   - HINT: "give me a hint", "I'm stuck"
+   - QUIZ: "quiz me", "test me"
+   - EXAM: "exam practice", "mock test"
+   - STEP_SOLVER: "solve this step by step", "walk me through"
+   - TEACHER_CHAT: casual subject questions, "tell me about"
+   - REVISION: "review", "revise", "what did I learn"
+   - null: if no specific mode is implied
 
 Respond ONLY with the JSON object.`,
         },
@@ -75,6 +89,7 @@ Respond ONLY with the JSON object.`,
       topic: null,
       intent: "ASK",
       difficulty: null,
+      pedagogicalMode: null,
     };
   }
 }

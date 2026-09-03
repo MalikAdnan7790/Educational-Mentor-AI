@@ -8,10 +8,10 @@ import {
   examSummaryResponseSchema,
   examSummaryJsonSchema,
 } from "./schemas";
-import type { Difficulty } from "@prisma/client";
+import type { Difficulty } from "@/types/prisma-enums";
 
 export interface GeneratedExamQuestion {
-  type: "MCQ" | "TRUE_FALSE" | "SHORT_ANSWER";
+  type: "MCQ" | "TRUE_FALSE" | "SHORT_ANSWER" | "CONCEPT" | "SCENARIO" | "CODING";
   question: string;
   options: string[] | null;
   answer: string;
@@ -42,7 +42,7 @@ export async function generateExam(input: {
       {
         role: "system",
         content:
-          "You are an exam setter. Create a balanced practice exam. Mix MCQ (4 options, one correct), TRUE_FALSE, and SHORT_ANSWER questions — roughly 50% MCQ, 25% TRUE_FALSE, 25% SHORT_ANSWER, shuffled so types interleave. For MCQ, options has exactly 4 entries and answer must match one option EXACTLY. For TRUE_FALSE, options is [\"True\", \"False\"] and answer is \"True\" or \"False\". For SHORT_ANSWER, options is null and answer is a concise canonical answer (1-2 sentences). Questions must be answerable from the material given, unambiguous, and clearly worded.",
+          "You are an exam setter. Create a balanced practice exam. Use a mix of question types: ~40% MCQ (4 options, one correct), ~15% TRUE_FALSE, ~15% SHORT_ANSWER, ~10% CONCEPT (explain a concept or relationship), ~10% SCENARIO (apply knowledge to a real-world situation), ~10% CODING (write or debug code if subject is programming, otherwise skip CODING). Shuffle types so they interleave. For MCQ, options has exactly 4 entries and answer must match one option EXACTLY — make distractors plausible but clearly wrong. For TRUE_FALSE, options is [\"True\", \"False\"] and answer is \"True\" or \"False\". For SHORT_ANSWER/CONCEPT/SCENARIO/CODING, options is null and answer is a concise canonical answer. Questions must be answerable from the material given, unambiguous, and clearly worded.",
       },
       {
         role: "user",

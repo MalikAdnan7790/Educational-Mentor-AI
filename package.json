@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "prisma generate && prisma db push && next build",
+    "vercel-build": "prisma generate && next build",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
@@ -16,6 +16,8 @@
     "setup": "npm install && npm run prisma:generate && npm run prisma:migrate && npm run prisma:seed"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
+    "@prisma/adapter-libsql": "^7.10.0",
     "@prisma/client": "^6.16.2",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",

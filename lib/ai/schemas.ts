@@ -7,6 +7,7 @@ export const detectResponseSchema = z.object({
   topic: z.string().nullable(),
   intent: z.enum(["ASK", "PRACTICE", "EXPLAIN", "CHAT"]).default("ASK"),
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]).nullable(),
+  pedagogicalMode: z.enum(["EXPLAIN", "PRACTICE", "HINT", "QUIZ", "EXAM", "STEP_SOLVER", "TEACHER_CHAT", "REVISION"]).nullable().default(null),
 });
 
 export const detectJsonSchema = {
@@ -18,8 +19,9 @@ export const detectJsonSchema = {
     topic: { type: ["string", "null"] },
     intent: { type: "string", enum: ["ASK", "PRACTICE", "EXPLAIN", "CHAT"] },
     difficulty: { type: ["string", "null"], enum: ["EASY", "MEDIUM", "HARD", null] },
+    pedagogicalMode: { type: ["string", "null"], enum: ["EXPLAIN", "PRACTICE", "HINT", "QUIZ", "EXAM", "STEP_SOLVER", "TEACHER_CHAT", "REVISION", null] },
   },
-  required: ["language", "educationLevel", "subjectKey", "topic", "intent", "difficulty"],
+  required: ["language", "educationLevel", "subjectKey", "topic", "intent", "difficulty", "pedagogicalMode"],
   additionalProperties: false,
 } as const;
 
@@ -440,7 +442,7 @@ export const vivaSummaryJsonSchema = {
 // ---------- Exam Simulator / Notes → Quiz ----------
 
 export const examGenQuestionSchema = z.object({
-  type: z.enum(["MCQ", "TRUE_FALSE", "SHORT_ANSWER"]),
+  type: z.enum(["MCQ", "TRUE_FALSE", "SHORT_ANSWER", "CONCEPT", "SCENARIO", "CODING"]),
   question: z.string(),
   options: z.array(z.string()).nullable(),
   answer: z.string(),
@@ -455,7 +457,7 @@ export const examGenResponseSchema = z.object({
 export const examQuestionJsonSchema = {
   type: "object",
   properties: {
-    type: { type: "string", enum: ["MCQ", "TRUE_FALSE", "SHORT_ANSWER"] },
+    type: { type: "string", enum: ["MCQ", "TRUE_FALSE", "SHORT_ANSWER", "CONCEPT", "SCENARIO", "CODING"] },
     question: { type: "string" },
     options: { type: ["array", "null"], items: { type: "string" } },
     answer: { type: "string" },
@@ -555,6 +557,97 @@ export const predictMistakeJsonSchema = {
     tip: { type: "string" },
   },
   required: ["likelyMistake", "warning", "tip"],
+  additionalProperties: false,
+} as const;
+
+// ---------- Study Roadmap ----------
+
+export const roadmapTaskSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  activityType: z.enum(["READ", "PRACTICE", "QUIZ", "REVIEW", "EXERCISE", "VIDEO"]),
+  topic: z.string(),
+  estimatedMinutes: z.number().min(5).max(120),
+});
+
+export const roadmapWeekSchema = z.object({
+  week: z.number(),
+  theme: z.string(),
+  tasks: z.array(roadmapTaskSchema).min(1),
+});
+
+export const roadmapResponseSchema = z.object({
+  title: z.string(),
+  weeks: z.array(roadmapWeekSchema).min(1),
+});
+
+export const roadmapTaskJsonSchema = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    description: { type: "string" },
+    activityType: { type: "string", enum: ["READ", "PRACTICE", "QUIZ", "REVIEW", "EXERCISE", "VIDEO"] },
+    topic: { type: "string" },
+    estimatedMinutes: { type: "number" },
+  },
+  required: ["title", "description", "activityType", "topic", "estimatedMinutes"],
+  additionalProperties: false,
+} as const;
+
+export const roadmapWeekJsonSchema = {
+  type: "object",
+  properties: {
+    week: { type: "number" },
+    theme: { type: "string" },
+    tasks: { type: "array", items: roadmapTaskJsonSchema },
+  },
+  required: ["week", "theme", "tasks"],
+  additionalProperties: false,
+} as const;
+
+export const roadmapJsonSchema = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    weeks: { type: "array", items: roadmapWeekJsonSchema },
+  },
+  required: ["title", "weeks"],
+  additionalProperties: false,
+} as const;
+
+// ---------- Mini-Lesson ----------
+
+export const miniLessonSectionSchema = z.object({
+  title: z.string(),
+  content: z.string(),
+  checkQuestion: z.string(),
+  checkAnswer: z.string(),
+});
+
+export const miniLessonResponseSchema = z.object({
+  topic: z.string(),
+  sections: z.array(miniLessonSectionSchema).min(2).max(8),
+});
+
+export const miniLessonSectionJsonSchema = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    content: { type: "string" },
+    checkQuestion: { type: "string" },
+    checkAnswer: { type: "string" },
+  },
+  required: ["title", "content", "checkQuestion", "checkAnswer"],
+  additionalProperties: false,
+} as const;
+
+export const miniLessonJsonSchema = {
+  type: "object",
+  properties: {
+    topic: { type: "string" },
+    sections: { type: "array", items: miniLessonSectionJsonSchema },
+  },
+  required: ["topic", "sections"],
   additionalProperties: false,
 } as const;
 

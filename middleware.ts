@@ -19,24 +19,32 @@ export function middleware(req: NextRequest) {
   const isPublicApi = PUBLIC_APIS.some((p) => pathname === p || pathname.startsWith(p + "/"));
   const isPublicPage = PUBLIC_PAGES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
-  if (isPublicApi) return NextResponse.next();
+  if (isPublicApi) return addSecurityHeaders(NextResponse.next());
 
   if (isPublicPage) {
     // Already logged in → skip the auth pages
     if (hasCookie) return NextResponse.redirect(new URL("/", req.url));
-    return NextResponse.next();
+    return addSecurityHeaders(NextResponse.next());
   }
 
   if (!hasCookie) {
     if (isApi) {
-      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+      return addSecurityHeaders(NextResponse.json({ error: "unauthorized" }, { status: 401 }));
     }
     const loginUrl = new URL("/login", req.url);
     if (pathname !== "/") loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  return addSecurityHeaders(NextResponse.next());
+}
+
+function addSecurityHeaders(response: NextResponse): NextResponse {
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  return response;
 }
 
 export const config = {

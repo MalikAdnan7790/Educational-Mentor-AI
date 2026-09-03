@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getSessionStudent } from "@/lib/auth";
 import { generateVivaQuestion, summarizeViva } from "@/lib/ai/viva";
 import { applyMasteryEvidence } from "@/lib/analytics";
+import type { Difficulty, LanguagePref, EducationLevel } from "@/types/prisma-enums";
 
 export const dynamic = "force-dynamic";
 
@@ -64,15 +65,15 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
 
   const next = await generateVivaQuestion({
     topic: viva.topic,
-    difficulty: viva.difficulty,
-    language: viva.language,
+    difficulty: viva.difficulty as Difficulty,
+    language: viva.language as LanguagePref,
     order: last.order + 1,
     previousQA: viva.questions.map((q) => ({
       question: q.question,
       answer: q.studentAnswer,
       concept: q.concept,
     })),
-    studentLevel: student.educationLevel,
+    studentLevel: student.educationLevel as EducationLevel,
   });
   if (!next) {
     return NextResponse.json({ error: "generation_failed" }, { status: 503 });

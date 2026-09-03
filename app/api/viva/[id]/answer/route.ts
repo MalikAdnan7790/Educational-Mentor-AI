@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getSessionStudent } from "@/lib/auth";
 import { gradeVivaAnswer } from "@/lib/ai/viva";
 import { vivaAnswerSchema } from "@/lib/validation";
+import type { Difficulty, LanguagePref } from "@/types/prisma-enums";
 
 export const dynamic = "force-dynamic";
 
@@ -36,8 +37,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     question: current.question,
     concept: current.concept,
     studentAnswer: parsed.data.answer,
-    difficulty: viva.difficulty,
-    language: viva.language,
+    difficulty: viva.difficulty as Difficulty,
+    language: viva.language as LanguagePref,
   });
   if (!grade) {
     // Nothing saved — the student can resubmit the same answer

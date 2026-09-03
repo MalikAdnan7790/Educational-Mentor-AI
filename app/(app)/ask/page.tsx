@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChatView, type ChatViewHandle } from "@/components/chat/chat-view";
 import { AskMyTeacher } from "@/components/chat/ask-my-teacher";
 import { getTeacherAction, type TeacherActionId } from "@/lib/teacher-actions";
+import type { PedagogicalModeValue } from "@/components/chat/pedagogical-mode-selector";
 
 interface Subject {
   key: string;
@@ -18,6 +19,7 @@ export default function AskPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [subjectKey, setSubjectKey] = useState<string | null>(null);
   const [topic, setTopic] = useState<string | null>(null);
+  const [pedagogicalMode, setPedagogicalMode] = useState<PedagogicalModeValue | null>(null);
 
   const chatRef = useRef<ChatViewHandle>(null);
 
@@ -97,6 +99,8 @@ export default function AskPage() {
           topic={topic}
           onSubjectChange={setSubjectKey}
           onTopicChange={setTopic}
+          pedagogicalMode={pedagogicalMode}
+          onPedagogicalModeChange={setPedagogicalMode}
         />
       </div>
     </div>

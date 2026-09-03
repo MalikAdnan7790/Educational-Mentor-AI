@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Noto_Naskh_Arabic } from "next/font/google";
 import "@/app/globals.css";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
-const notoUrdu = Noto_Naskh_Arabic({ subsets: ["arabic"], variable: "--font-urdu", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Educational Mentor AI — Independent Mode",
@@ -14,10 +9,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} ${notoUrdu.variable}`}
-    >
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

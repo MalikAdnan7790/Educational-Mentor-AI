@@ -12,7 +12,8 @@
  */
 
 import { prisma } from "@/lib/db";
-import type { Attempt, Difficulty, LearningMode } from "@prisma/client";
+import type { Attempt } from "@prisma/client";
+import type { Difficulty, LearningMode } from "@/types/prisma-enums";
 
 export interface IndependenceMetrics {
   independentSuccessRate: number; // problems solved without full assistance

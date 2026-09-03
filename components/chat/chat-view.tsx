@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback, forwardRef, useImperativeHand
 import { MessageBubble } from "./message-bubble";
 import { Composer } from "./composer";
 import { ModeSelector } from "./mode-selector";
+import { PedagogicalModeSelector, type PedagogicalModeValue } from "./pedagogical-mode-selector";
 import { SubjectChips } from "./subject-chips";
 import { ExplainBackModal } from "./explain-back-modal";
 import { streamMessage } from "@/lib/stream-client";
@@ -40,6 +41,8 @@ interface ChatViewProps {
   topic: string | null;
   onSubjectChange: (key: string | null) => void;
   onTopicChange: (topic: string | null) => void;
+  pedagogicalMode: PedagogicalModeValue | null;
+  onPedagogicalModeChange: (mode: PedagogicalModeValue | null) => void;
 }
 
 export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatView({
@@ -56,11 +59,13 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
   topic,
   onSubjectChange,
   onTopicChange,
+  pedagogicalMode,
+  onPedagogicalModeChange,
 }, ref) {
   const [messages, setMessages] = useState<Message[]>(initialMessages ?? []);
   const [streamingText, setStreamingText] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; retryContent?: string; retryImage?: string; retryAction?: TeacherActionId } | null>(null);
   const [explainBackTarget, setExplainBackTarget] = useState<{
     topic: string;
   } | null>(null);
@@ -81,6 +86,19 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
     return () => abortRef.current?.abort();
   }, []);
 
+  // Escape key cancels streaming
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && isStreaming) {
+        abortRef.current?.abort();
+        setIsStreaming(false);
+        setStreamingText("");
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isStreaming]);
+
   const handleSend = useCallback(
     async (content: string, imageBase64?: string, teacherAction?: TeacherActionId) => {
       setError(null);
@@ -99,6 +117,7 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
               language,
               subjectKey: subjectKey ?? undefined,
               topic: topic ?? undefined,
+              pedagogicalMode: pedagogicalMode ?? undefined,
             }),
           });
           if (!res.ok) {
@@ -120,7 +139,7 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
           onConversationCreated(activeId);
         } catch (err) {
           const message = err instanceof Error ? err.message : "Unable to create conversation";
-          setError(`Failed to start conversation: ${message}`);
+          setError({ message: `Failed to start conversation: ${message}` });
           return;
         }
       }
@@ -146,11 +165,11 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
           onDelta: (delta) => {
             setStreamingText((prev) => prev + delta);
           },
-          onDone: (fullText) => {
+          onDone: (fullText, messageId) => {
             setStreamingText("");
             setIsStreaming(false);
 
-            const assistantMsgId = `local-${++msgIdCounter.current}`;
+            const assistantMsgId = messageId ?? `local-${++msgIdCounter.current}`;
             const wasFullExplanation = fullText.includes("<<<META>>>");
 
             setMessages((prev) => [
@@ -173,14 +192,24 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
               unauthorized: "Please log in again to continue.",
               stream_interrupted: "Connection was interrupted. Please try again.",
               no_body: "Could not read the AI response.",
+              rate_limit: "Rate limited. Please wait a moment and try again.",
+              context_too_long: "This conversation is getting long. Try starting a new one.",
+              content_filter: "Response was blocked by a content filter. Try rephrasing.",
+              overloaded: "AI is temporarily overloaded. Please try again.",
+              timeout: "The AI took too long to respond. Please try again.",
             };
-            setError(friendly[err] ?? err);
+            setError({
+              message: friendly[err] ?? err,
+              retryContent: content,
+              retryImage: imageBase64,
+              retryAction: teacherAction,
+            });
           },
         },
         controller.signal,
       );
     },
-    [conversationId, mode, isAiFree, language, subjectKey, topic, onConversationCreated],
+    [conversationId, mode, isAiFree, language, subjectKey, topic, pedagogicalMode, onConversationCreated],
   );
 
   useImperativeHandle(
@@ -196,25 +225,32 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
   return (
     <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="flex items-center justify-between gap-3 border-b border-ink-100 bg-white px-4 py-3 flex-wrap">
-        <ModeSelector
-          value={mode}
-          onChange={onModeChange}
-          isAiFree={isAiFree}
-          onAiFreeChange={onAiFreeChange}
+      <div className="flex flex-col gap-2 border-b border-ink-100 bg-white px-4 py-3">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <ModeSelector
+            value={mode}
+            onChange={onModeChange}
+            isAiFree={isAiFree}
+            onAiFreeChange={onAiFreeChange}
+            disabled={!!conversationId}
+          />
+          <SubjectChips
+            subjectKey={subjectKey}
+            topic={topic}
+            onSubjectChange={onSubjectChange}
+            onTopicChange={onTopicChange}
+            subjects={subjects}
+          />
+        </div>
+        <PedagogicalModeSelector
+          value={pedagogicalMode}
+          onChange={onPedagogicalModeChange}
           disabled={!!conversationId}
-        />
-        <SubjectChips
-          subjectKey={subjectKey}
-          topic={topic}
-          onSubjectChange={onSubjectChange}
-          onTopicChange={onTopicChange}
-          subjects={subjects}
         />
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3" role="log" aria-live="polite" aria-label="Conversation messages">
         {messages.length === 0 && !isStreaming && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="text-4xl mb-3">💬</div>
@@ -231,6 +267,7 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
               role={msg.role}
               content={msg.content}
               language={msg.language ?? language}
+              messageId={msg.role === "ASSISTANT" ? msg.id : undefined}
             />
             {msg.role === "ASSISTANT" && msg.wasFullExplanation && !isAiFree && topic && (
               <div className="flex justify-end mt-1">
@@ -263,8 +300,35 @@ export const ChatView = forwardRef<ChatViewHandle, ChatViewProps>(function ChatV
         )}
 
         {error && (
-          <div className="rounded-lg bg-coral-500/10 px-3 py-2 text-xs text-coral-500 text-center">
-            {error}
+          <div className="rounded-xl border border-coral-200 bg-coral-50 px-4 py-3 flex items-start gap-3">
+            <svg className="h-5 w-5 text-coral-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-coral-700">{error.message}</p>
+              {error.retryContent && (
+                <button
+                  onClick={() => {
+                    const retry = error;
+                    setError(null);
+                    void handleSend(retry.retryContent!, retry.retryImage, retry.retryAction);
+                  }}
+                  aria-label="Retry sending message"
+                  className="mt-2 text-xs font-medium text-coral-600 hover:text-coral-800 underline"
+                >
+                  Try again
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setError(null)}
+              aria-label="Dismiss error"
+              className="text-coral-400 hover:text-coral-600 shrink-0"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
       </div>

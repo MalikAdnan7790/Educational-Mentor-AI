@@ -8,7 +8,7 @@ import {
   vivaSummaryResponseSchema,
   vivaSummaryJsonSchema,
 } from "./schemas";
-import type { Difficulty } from "@prisma/client";
+import type { Difficulty } from "@/types/prisma-enums";
 
 const LANGUAGE_NAME: Record<string, string> = {
   EN: "English",

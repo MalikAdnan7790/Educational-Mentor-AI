@@ -5,6 +5,7 @@ import { evaluateAttempt } from "@/lib/ai/evaluate";
 import { submitAttemptSchema } from "@/lib/validation";
 import { evaluateAchievements, recomputeStudentScore } from "@/lib/scoring";
 import { applyMasteryEvidence } from "@/lib/analytics";
+import type { LearningMode } from "@/types/prisma-enums";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const analysis = await evaluateAttempt({
     session: {
       id: session.id,
-      mode: session.mode,
+      mode: session.mode as LearningMode,
       isAiFree: session.isAiFree,
       currentHintLevel: session.currentHintLevel,
     },

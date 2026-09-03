@@ -4,7 +4,7 @@
 
 export interface StreamCallbacks {
   onDelta: (delta: string) => void;
-  onDone: (fullText: string) => void;
+  onDone: (fullText: string, messageId?: string) => void;
   onError: (error: string) => void;
 }
 
@@ -53,7 +53,7 @@ export async function streamMessage(
         try {
           const data = JSON.parse(jsonStr);
           if (data.delta) callbacks.onDelta(data.delta);
-          if (data.done) callbacks.onDone(data.text ?? "");
+          if (data.done) callbacks.onDone(data.text ?? "", data.messageId);
           if (data.error) callbacks.onError(data.error);
         } catch {
           // Partial JSON — will be completed in next chunk

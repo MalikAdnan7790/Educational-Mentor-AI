@@ -64,12 +64,16 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
             <div className="relative group">
               <img
                 src={imageBase64}
-                alt="Attached"
-                className="h-16 w-16 rounded-lg object-cover border border-ink-200"
+                alt="Attached question"
+                className="h-20 w-20 rounded-lg object-cover border border-ink-200"
               />
+              <span className="absolute top-1 left-1 rounded bg-ink-900/70 px-1.5 py-0.5 text-[9px] font-semibold text-white">
+                Question
+              </span>
               <button
                 type="button"
                 onClick={() => setImageBase64(null)}
+                aria-label="Remove attached image"
                 className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-ink-900 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 ×
@@ -85,6 +89,7 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
               <button
                 type="button"
                 onClick={() => setPdfText(null)}
+                aria-label="Remove PDF attachment"
                 className="ml-1 shrink-0 text-ink-400 hover:text-ink-600"
               >
                 ×
@@ -100,6 +105,7 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
               <button
                 type="button"
                 onClick={() => setDocFile(null)}
+                aria-label="Remove file attachment"
                 className="ml-1 shrink-0 text-ink-400 hover:text-ink-600"
               >
                 ×
@@ -107,6 +113,11 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
             </div>
           )}
         </div>
+      )}
+      {imageBase64 && (
+        <p className="mb-2 text-[11px] text-ink-400">
+          Your teacher will help you work through this step by step.
+        </p>
       )}
 
       <div className="flex items-end gap-2">
@@ -126,6 +137,7 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
           placeholder={isAiFree ? "AI-Free mode — try working it out first!" : "Ask anything…"}
           disabled={disabled}
           rows={1}
+          aria-label="Message input"
           className="input min-h-[44px] max-h-[160px] resize-none py-2.5 text-sm"
         />
 
@@ -134,6 +146,7 @@ export function Composer({ onSend, disabled, isAiFree }: ComposerProps) {
           type="button"
           onClick={handleSend}
           disabled={!canSend}
+          aria-label="Send message"
           className="btn-primary shrink-0 px-3 py-2.5"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -9,6 +9,7 @@ import {
 } from "@/lib/scoring";
 import { applyMasteryEvidence } from "@/lib/analytics";
 import { finishSessionSchema } from "@/lib/validation";
+import type { Difficulty, LearningMode } from "@/types/prisma-enums";
 
 export const dynamic = "force-dynamic";
 
@@ -113,8 +114,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     );
   }
 
-  const adaptation = adaptDifficulty(metrics.independentSuccessRate, session.student.currentDifficulty);
-  const nextMode = recommendedNextMode(session.student.preferredMode, metrics);
+  const adaptation = adaptDifficulty(metrics.independentSuccessRate, session.student.currentDifficulty as Difficulty);
+  const nextMode = recommendedNextMode(session.student.preferredMode as LearningMode, metrics);
 
   await prisma.student.update({
     where: { id: session.studentId },
