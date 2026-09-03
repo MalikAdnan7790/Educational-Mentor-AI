@@ -46,7 +46,7 @@ export function PdfUpload({ onText, disabled }: PdfUploadProps) {
       <input
         ref={inputRef}
         type="file"
-        accept="application/pdf"
+        accept=".pdf"
         className="hidden"
         onChange={handleChange}
         disabled={disabled || processing}

@@ -43,7 +43,7 @@ export function ImageUpload({ onImage, disabled }: ImageUploadProps) {
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.svg"
         className="hidden"
         onChange={handleChange}
         disabled={disabled || processing}
