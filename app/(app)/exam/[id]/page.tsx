@@ -132,7 +132,7 @@ export default function ExamDetailPage() {
   }
   if (notFound || !exam) {
     return (
-      <div className="card p-10 text-center text-sm text-ink-500">
+      <div className="rounded-2xl border-2 border-ink-100 bg-white p-10 text-center text-sm text-ink-500">
         Exam not found.{" "}
         <Link href="/exam" className="underline">
           Back to exams
@@ -162,7 +162,7 @@ export default function ExamDetailPage() {
         {!graded && timerLabel && (
           <span
             className={clsx(
-              "rounded-xl border px-4 py-2 font-mono text-lg font-semibold",
+              "rounded-xl border-2 px-4 py-2 font-mono text-lg font-semibold",
               secondsLeft != null && secondsLeft < 60
                 ? "border-coral-300 bg-coral-500/10 text-coral-600"
                 : "border-ink-200 bg-white text-ink-900",
@@ -174,7 +174,7 @@ export default function ExamDetailPage() {
       </div>
 
       {graded && (
-        <section className="card p-6">
+        <section className="rounded-2xl border-2 border-ink-100 bg-white p-6">
           <div className="flex flex-wrap items-center gap-4">
             <div
               className={clsx(
@@ -245,9 +245,9 @@ export default function ExamDetailPage() {
       {/* Questions */}
       <section className="space-y-4">
         {questions.map((q) => (
-          <div key={q.id} className="card p-5">
+          <div key={q.id} className="rounded-2xl border-2 border-ink-100 bg-white p-5">
             <div className="flex items-start justify-between gap-3">
-              <h3 className="text-sm font-semibold leading-relaxed text-ink-900">
+              <h3 className="text-sm font-bold leading-relaxed text-ink-900">
                 {q.order}. {q.question}
               </h3>
               <span className="shrink-0 rounded-md bg-ink-100 px-1.5 py-0.5 text-[10px] font-semibold text-ink-500">
@@ -263,7 +263,7 @@ export default function ExamDetailPage() {
                       <label
                         key={opt}
                         className={clsx(
-                          "flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-sm transition-colors",
+                          "flex cursor-pointer items-center gap-3 rounded-xl border-2 px-3 py-2 text-sm transition-colors",
                           answers[q.id] === opt
                             ? "border-ink-900 bg-ink-50 font-medium"
                             : "border-ink-100 hover:border-ink-300",
@@ -298,7 +298,7 @@ export default function ExamDetailPage() {
                 <div className="flex flex-wrap items-center gap-2">
                   <span
                     className={clsx(
-                      "rounded-full px-2.5 py-1 text-xs font-semibold",
+                      "rounded-xl px-2.5 py-1 text-xs font-semibold",
                       q.isCorrect ? "bg-mint-500/15 text-mint-700" : "bg-coral-500/10 text-coral-600",
                     )}
                   >

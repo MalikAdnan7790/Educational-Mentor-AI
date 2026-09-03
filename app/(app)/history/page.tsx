@@ -61,7 +61,7 @@ export default function HistoryPage() {
               onClick={() => setFilter(f)}
               className={clsx(
                 "rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors",
-                filter === f ? "bg-ink-900 text-white" : "border border-ink-200 text-ink-600 hover:bg-ink-50",
+                filter === f ? "bg-ink-900 text-white" : "border-2 border-ink-200 text-ink-600 hover:bg-ink-50",
               )}
             >
               {f === "ALL" ? "All" : f === "TEXT" ? "Text" : "Voice"}
@@ -71,7 +71,7 @@ export default function HistoryPage() {
       </div>
 
       {conversations.length === 0 ? (
-        <div className="card p-8 text-center">
+        <div className="rounded-2xl border-2 border-ink-100 bg-white p-8 text-center">
           <p className="text-sm text-ink-500">No conversations yet.</p>
           <Link href="/ask" className="btn-primary mt-3 inline-flex text-sm">
             Start a conversation
@@ -83,7 +83,7 @@ export default function HistoryPage() {
             <Link
               key={c.id}
               href={c.kind === "VOICE" ? "/voice" : "/ask"}
-              className="card flex items-center gap-4 p-4 hover:border-ink-300 transition-colors"
+              className="rounded-2xl border-2 border-ink-100 bg-white flex items-center gap-4 p-4 hover:border-ink-300 transition-colors"
             >
               <div
                 className={clsx(

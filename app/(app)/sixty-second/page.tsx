@@ -163,7 +163,7 @@ export default function SixtySecondPage() {
           <div className="mt-4 space-y-4">
             <div className="rounded-2xl border-2 border-ink-100 bg-white p-4">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-mint-500/15 px-2 py-0.5 text-[10px] font-bold text-mint-700">
+                <span className="rounded-xl bg-mint-500/15 px-2 py-0.5 text-[10px] font-bold text-mint-700">
                   30 sec
                 </span>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
@@ -175,7 +175,7 @@ export default function SixtySecondPage() {
 
             <div className="rounded-2xl border-2 border-ink-100 bg-white p-4">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                <span className="rounded-xl bg-amber-400/20 px-2 py-0.5 text-[10px] font-bold text-amber-700">
                   20 sec
                 </span>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
@@ -187,7 +187,7 @@ export default function SixtySecondPage() {
 
             <div className="rounded-2xl border-2 border-ink-100 bg-white p-4">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-coral-500/10 px-2 py-0.5 text-[10px] font-bold text-coral-600">
+                <span className="rounded-xl bg-coral-500/10 px-2 py-0.5 text-[10px] font-bold text-coral-600">
                   10 sec
                 </span>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
@@ -226,7 +226,7 @@ export default function SixtySecondPage() {
           <div className="flex flex-wrap items-center gap-3">
             <span
               className={clsx(
-                "rounded-full px-2.5 py-1 text-xs font-semibold",
+                "rounded-xl px-2.5 py-1 text-xs font-semibold",
                 result.passed ? "bg-mint-500/15 text-mint-700" : "bg-coral-500/10 text-coral-600",
               )}
             >

@@ -62,8 +62,8 @@ export default function CoachPage() {
       </section>
 
       {!report && (
-        <section className="card max-w-2xl p-6 text-center">
-          <h2 className="text-lg font-semibold text-ink-900">How am I really doing?</h2>
+        <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6 text-center">
+          <h2 className="text-lg font-bold text-ink-900">How am I really doing?</h2>
           <p className="mt-2 text-sm text-ink-500">
             The coach reviews your recent learning history and tells you what to do next:
             what is working, what is not, and the single best next step.
@@ -80,7 +80,7 @@ export default function CoachPage() {
 
       {report && (
         <>
-          <section className="card max-w-2xl p-6">
+          <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 What went well
@@ -98,7 +98,7 @@ export default function CoachPage() {
             )}
           </section>
 
-          <section className="card max-w-2xl p-6">
+          <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6">
             <span className="text-xs font-bold uppercase tracking-wider text-ink-500">
               What struggled
             </span>
@@ -114,13 +114,13 @@ export default function CoachPage() {
           </section>
 
           <section className="grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="card p-5">
+            <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Common mistake
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-800">{report.commonMistake}</p>
             </div>
-            <div className="card p-5">
+            <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Revise this concept
               </h3>
@@ -128,7 +128,7 @@ export default function CoachPage() {
                 {report.revisionConcept}
               </p>
             </div>
-            <div className="card p-5">
+            <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Recommended practice
               </h3>
@@ -136,7 +136,7 @@ export default function CoachPage() {
                 {report.recommendedPractice}
               </p>
             </div>
-            <div className="card p-5">
+            <div className="rounded-2xl border-2 border-ink-100 bg-white p-5">
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Next topic
               </h3>
@@ -148,7 +148,7 @@ export default function CoachPage() {
           </section>
 
           {report.confidenceNote && (
-            <section className="card max-w-2xl border-l-4 border-mint-400 p-6">
+            <section className="rounded-2xl border-2 border-ink-100 bg-white border-l-4 border-mint-400 p-6">
               <h3 className="text-xs font-bold uppercase tracking-wider text-ink-500">
                 Confidence check
               </h3>

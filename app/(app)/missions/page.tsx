@@ -215,8 +215,8 @@ export default function MissionsPage() {
         </section>
 
         {missionDone && (
-          <section className="card border-mint-400/40 bg-mint-500/5 p-6">
-            <h2 className="text-lg font-semibold text-mint-700">Mission complete</h2>
+          <section className="rounded-2xl border-2 border-mint-400/40 bg-mint-500/5 p-6">
+            <h2 className="text-lg font-bold text-mint-700">Mission complete</h2>
             <p className="mt-1 text-sm text-ink-700">
               You repaired this weakness — the mistake has been marked resolved on your record.
             </p>
@@ -242,13 +242,13 @@ export default function MissionsPage() {
               <div
                 key={s.id}
                 className={clsx(
-                  "card p-5",
+                  "rounded-2xl border-2 border-ink-100 bg-white p-5",
                   isCurrent && "border-mint-400/50 ring-1 ring-mint-400/30",
                   !isCurrent && !done && "opacity-60",
                 )}
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className={clsx("font-semibold", done ? "text-mint-700" : "text-ink-500")}>
+                  <span className={clsx("font-bold", done ? "text-mint-700" : "text-ink-500")}>
                     {done ? "✓" : s.order}. {STEP_LABELS[s.kind] ?? s.kind}
                   </span>
                   {done && s.score != null && (
@@ -264,7 +264,7 @@ export default function MissionsPage() {
                 </p>
 
                 {done && s.answer && s.kind !== "MINI_LESSON" && (
-                  <p className="mt-3 rounded-lg bg-mint-500/10 p-3 text-sm text-ink-700">
+                  <p className="mt-3 rounded-xl bg-mint-500/10 p-3 text-sm text-ink-700">
                     <strong>Model answer:</strong> {s.answer}
                   </p>
                 )}
@@ -305,14 +305,14 @@ export default function MissionsPage() {
         {lastFeedback && (
           <section
             className={clsx(
-              "card p-5",
+              "rounded-2xl border-2 border-ink-100 bg-white p-5",
               lastFeedback.passed ? "border-mint-400/50 bg-mint-500/5" : "border-coral-400/40 bg-coral-500/5",
             )}
           >
             <div className="flex flex-wrap items-center gap-3">
               <span
                 className={clsx(
-                  "rounded-full px-2.5 py-1 text-xs font-semibold",
+                  "rounded-xl px-2.5 py-1 text-xs font-semibold",
                   lastFeedback.passed ? "bg-mint-500/15 text-mint-700" : "bg-coral-500/10 text-coral-600",
                 )}
               >
@@ -328,7 +328,7 @@ export default function MissionsPage() {
               {lastFeedback.feedback}
             </p>
             {lastFeedback.passed && lastFeedback.answer && (
-              <p className="mt-3 rounded-lg bg-white/70 p-3 text-sm text-ink-700">
+              <p className="mt-3 rounded-xl bg-white/70 p-3 text-sm text-ink-700">
                 <strong>Model answer:</strong> {lastFeedback.answer}
               </p>
             )}
@@ -365,10 +365,10 @@ export default function MissionsPage() {
       </section>
 
       {activeMission && (
-        <section className="card border-mint-400/40 bg-mint-500/5 p-5">
+        <section className="rounded-2xl border-2 border-mint-400/40 bg-mint-500/5 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-sm font-semibold text-ink-900">Mission in progress</h2>
+              <h2 className="text-sm font-bold text-ink-900">Mission in progress</h2>
               <p className="mt-1 text-sm text-ink-700">
                 {activeMission.title} — {activeMission.stepsCompleted}/{activeMission.stepsTotal} steps done
               </p>
@@ -380,8 +380,8 @@ export default function MissionsPage() {
         </section>
       )}
 
-      <section className="card max-w-2xl p-6">
-        <h2 className="text-sm font-semibold text-ink-900">Your recurring mistakes</h2>
+      <section className="rounded-2xl border-2 border-ink-100 bg-white max-w-2xl p-6">
+        <h2 className="text-sm font-bold text-ink-900">Your recurring mistakes</h2>
         {mistakes.length === 0 ? (
           <p className="mt-2 text-sm text-ink-500">
             No repeating mistakes yet. Mistakes are recorded when you get something wrong twice —
@@ -390,7 +390,7 @@ export default function MissionsPage() {
         ) : (
           <ul className="mt-3 space-y-3">
             {mistakes.map((m) => (
-              <li key={m.id} className="rounded-xl border border-ink-100 p-4">
+              <li key={m.id} className="rounded-xl border-2 border-ink-100 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm font-medium text-ink-900">{m.mistakeType}</span>
                   <span className="chip bg-amber-400/20 text-amber-700">
@@ -422,17 +422,17 @@ export default function MissionsPage() {
         <h2 className="text-xs font-bold uppercase tracking-wider text-ink-500">Mission history</h2>
         <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {missions.length === 0 && (
-            <div className="col-span-full rounded-2xl border border-dashed border-ink-200 p-6 text-center text-sm text-ink-500">
+            <div className="col-span-full rounded-2xl border-2 border-dashed border-ink-200 p-6 text-center text-sm text-ink-500">
               No missions yet.
             </div>
           )}
           {missions.map((m) => (
-            <button key={m.id} onClick={() => openMission(m.id)} className="card p-4 text-left">
+            <button key={m.id} onClick={() => openMission(m.id)} className="rounded-2xl border-2 border-ink-100 bg-white p-4 text-left">
               <div className="flex items-center justify-between gap-2">
                 <span className="truncate text-sm font-medium text-ink-900">{m.title}</span>
                 <span
                   className={clsx(
-                    "rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                    "rounded-xl px-2 py-0.5 text-[10px] font-semibold",
                     m.status === "COMPLETED"
                       ? "bg-mint-500/15 text-mint-700"
                       : m.status === "ABANDONED"

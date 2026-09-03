@@ -100,10 +100,10 @@ export default function SettingsPage() {
                 key={l}
                 onClick={() => setSettings({ ...settings, educationLevel: l })}
                 className={clsx(
-                  "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                  "rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
                   settings.educationLevel === l
                     ? "bg-ink-900 text-white"
-                    : "border border-ink-200 text-ink-600 hover:bg-ink-50",
+                    : "border-2 border-ink-200 text-ink-600 hover:bg-ink-50",
                 )}
               >
                 {l.charAt(0) + l.slice(1).toLowerCase()}
@@ -122,10 +122,10 @@ export default function SettingsPage() {
               key={l.value}
               onClick={() => setSettings({ ...settings, preferredLanguage: l.value })}
               className={clsx(
-                "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                "rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
                 settings.preferredLanguage === l.value
                   ? "bg-ink-900 text-white"
-                  : "border border-ink-200 text-ink-600 hover:bg-ink-50",
+                  : "border-2 border-ink-200 text-ink-600 hover:bg-ink-50",
               )}
             >
               {l.label}
@@ -167,10 +167,10 @@ export default function SettingsPage() {
                 key={a}
                 onClick={() => setSettings({ ...settings, teacherAvatar: a })}
                 className={clsx(
-                  "rounded-lg px-4 py-2 text-xs font-medium transition-colors",
+                  "rounded-xl px-4 py-2 text-xs font-medium transition-colors",
                   settings.teacherAvatar === a
                     ? "bg-ink-900 text-white"
-                    : "border border-ink-200 text-ink-600 hover:bg-ink-50",
+                    : "border-2 border-ink-200 text-ink-600 hover:bg-ink-50",
                 )}
               >
                 {a === "MALE" ? "Male" : "Female"}
@@ -186,10 +186,10 @@ export default function SettingsPage() {
                 key={r}
                 onClick={() => setSettings({ ...settings, voiceRate: r })}
                 className={clsx(
-                  "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                  "rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
                   settings.voiceRate === r
                     ? "bg-ink-900 text-white"
-                    : "border border-ink-200 text-ink-600 hover:bg-ink-50",
+                    : "border-2 border-ink-200 text-ink-600 hover:bg-ink-50",
                 )}
               >
                 {r}x
