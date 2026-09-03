@@ -22,6 +22,9 @@ export function middleware(req: NextRequest) {
   if (isPublicApi) return addSecurityHeaders(NextResponse.next());
 
   if (isPublicPage) {
+    if (pathname === "/" && hasCookie) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
     return addSecurityHeaders(NextResponse.next());
   }
 
