@@ -22,8 +22,6 @@ export function middleware(req: NextRequest) {
   if (isPublicApi) return addSecurityHeaders(NextResponse.next());
 
   if (isPublicPage) {
-    // Already logged in → skip the auth pages
-    if (hasCookie) return NextResponse.redirect(new URL("/", req.url));
     return addSecurityHeaders(NextResponse.next());
   }
 

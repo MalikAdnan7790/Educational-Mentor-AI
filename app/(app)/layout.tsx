@@ -1,11 +1,14 @@
 import { redirect } from "next/navigation";
-import { getSessionStudent } from "@/lib/auth";
+import { cookies } from "next/headers";
+import { getSessionStudent, SESSION_COOKIE } from "@/lib/auth";
 import { Navbar } from "@/components/layout/navbar";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const student = await getSessionStudent();
-  // Middleware only checks cookie presence; this is the real session validation.
-  if (!student) redirect("/login");
+  if (!student) {
+    cookies().delete(SESSION_COOKIE);
+    redirect("/login");
+  }
 
   return (
     <div className="min-h-screen">
