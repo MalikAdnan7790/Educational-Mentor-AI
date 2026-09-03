@@ -1,14 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
 import type { EducationLevel } from "../types/prisma-enums";
 import { SUBJECT_CATALOG } from "../lib/subjects-catalog";
 import { TEACHER_PROFILES } from "../lib/teacher-profiles";
 
-const adapter = new PrismaLibSql({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 const PROBLEMS = [
   // ─── MATH ───────────────────────────────────────────────────────
