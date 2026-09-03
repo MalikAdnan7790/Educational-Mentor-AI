@@ -39,6 +39,19 @@ export function FileUpload({ onText, disabled }: FileUploadProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ filename: file.name, fileBase64 }),
       });
+      
+      const contentType = resp.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        if (resp.status === 413) {
+          setError("File is too large. Please try a smaller file (max 3 MB).");
+        } else if (resp.status === 401) {
+          setError("Please log in again to continue.");
+        } else {
+          setError(`Upload failed (error ${resp.status}). Please try again.`);
+        }
+        return;
+      }
+      
       const data = await resp.json();
       if (!resp.ok) {
         setError(friendlyError(data.error));
@@ -46,7 +59,7 @@ export function FileUpload({ onText, disabled }: FileUploadProps) {
       }
       onText(data.text, data.sourceType, file.name);
     } catch {
-      setError("Failed to read the file.");
+      setError("Failed to read the file. Please check your connection and try again.");
     } finally {
       setProcessing(false);
       if (inputRef.current) inputRef.current.value = "";

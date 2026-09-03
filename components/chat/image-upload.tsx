@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 import { ImagePlus } from "lucide-react";
 
-const MAX_DIMENSION = 1568;
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_DIMENSION = 1024;
+const MAX_BYTES = 2 * 1024 * 1024;
 
 interface ImageUploadProps {
   onImage: (base64: string) => void;
@@ -101,7 +101,7 @@ function processImage(file: File): Promise<string> {
       // Check size
       const base64Part = dataUrl.split(",")[1] || "";
       if (base64Part.length > MAX_BYTES * 1.37) {
-        reject(new Error("Image too large (max 5 MB after compression)."));
+        reject(new Error("Image too large (max 2 MB after compression)."));
         return;
       }
 

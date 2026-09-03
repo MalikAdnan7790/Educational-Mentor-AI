@@ -42,6 +42,19 @@ export function NoteUpload({ onLoaded, disabled }: NoteUploadProps) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ filename: file.name, fileBase64 }),
         });
+        
+        const contentType = res.headers.get("content-type") || "";
+        if (!contentType.includes("application/json")) {
+          if (res.status === 413) {
+            setError("File is too large. Please try a smaller file (max 3 MB).");
+          } else if (res.status === 401) {
+            setError("Please log in again to continue.");
+          } else {
+            setError(`Upload failed (error ${res.status}). Please try again.`);
+          }
+          return;
+        }
+        
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
           setError(EXTRACT_ERRORS[data.error] ?? "Failed to read this file.");
@@ -84,7 +97,7 @@ export function NoteUpload({ onLoaded, disabled }: NoteUploadProps) {
 }
 
 const EXTRACT_ERRORS: Record<string, string> = {
-  file_too_large: "File is too large (max 10 MB).",
+  file_too_large: "File is too large (max 3 MB).",
   unsupported_type: "Supported formats: PDF, DOCX, TXT, MD.",
   no_text_extracted: "No readable text found in this file.",
   extraction_failed: "Could not extract text from this file.",
