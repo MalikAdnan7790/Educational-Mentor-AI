@@ -1,12 +1,10 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { getSessionStudent, SESSION_COOKIE } from "@/lib/auth";
+import { getSessionStudent } from "@/lib/auth";
 import { Navbar } from "@/components/layout/navbar";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const student = await getSessionStudent();
   if (!student) {
-    cookies().delete(SESSION_COOKIE);
     redirect("/login");
   }
 
