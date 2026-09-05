@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { ScoreRing } from "@/components/dashboard/score-ring";
 import { MetricsGrid } from "@/components/dashboard/metrics-grid";
 import { HintTrend } from "@/components/dashboard/hint-trend";
@@ -14,6 +15,7 @@ import { LearningDna } from "@/components/dashboard/learning-dna";
 import { MasteryStages } from "@/components/dashboard/mastery-stages";
 import { LearningPathCard } from "@/components/dashboard/learning-path-card";
 import { StudyStreakCard } from "@/components/dashboard/study-streak-card";
+import { WelcomeCard } from "@/components/chat/welcome-card";
 import type { IndependenceMetrics } from "@/lib/scoring";
 
 interface Achievement {
@@ -99,6 +101,7 @@ interface LearningDnaData {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [metrics, setMetrics] = useState<IndependenceMetrics | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [dependency, setDependency] = useState<AIDependency | null>(null);
@@ -108,6 +111,10 @@ export default function DashboardPage() {
   const [dnaData, setDnaData] = useState<LearningDnaData | null>(null);
   const [streakData, setStreakData] = useState<StreakData | null>(null);
   const [loading, setLoading] = useState(true);
+
+  function handleAskQuestion() {
+    router.push("/ask");
+  }
 
   useEffect(() => {
     (async () => {
@@ -173,6 +180,9 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-extrabold text-ink-900">Dashboard</h1>
         <p className="text-sm text-ink-500 mt-1">Your learning overview at a glance.</p>
       </div>
+
+      {/* Welcome Card */}
+      <WelcomeCard onAskQuestion={handleAskQuestion} />
 
       {/* Next Best Action */}
       {nextAction && (
