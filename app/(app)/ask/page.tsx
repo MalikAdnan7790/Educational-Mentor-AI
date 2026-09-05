@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { MessageCircle } from "lucide-react";
 import { ChatView, type ChatViewHandle } from "@/components/chat/chat-view";
 import { AskMyTeacher } from "@/components/chat/ask-my-teacher";
+import { WelcomeCard } from "@/components/chat/welcome-card";
 import { getTeacherAction, type TeacherActionId } from "@/lib/teacher-actions";
 import type { PedagogicalModeValue } from "@/components/chat/pedagogical-mode-selector";
 
@@ -23,6 +24,11 @@ export default function AskPage() {
   const [pedagogicalMode, setPedagogicalMode] = useState<PedagogicalModeValue | null>(null);
 
   const chatRef = useRef<ChatViewHandle>(null);
+  const chatSectionRef = useRef<HTMLDivElement>(null);
+
+  function handleAskQuestion() {
+    chatSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   // Load settings + subjects
   useEffect(() => {
@@ -73,8 +79,13 @@ export default function AskPage() {
         </div>
       </div>
 
+      {/* Welcome Card */}
+      <WelcomeCard onAskQuestion={handleAskQuestion} />
+
       {/* Ask My Teacher panel */}
-      <AskMyTeacher onStart={handleTeacherStart} disabled={isAiFree} />
+      <div ref={chatSectionRef}>
+        <AskMyTeacher onStart={handleTeacherStart} disabled={isAiFree} />
+      </div>
 
       {/* Language selector */}
       <div className="mt-3 flex items-center gap-2 px-4 py-2 rounded-t-2xl border-x border-t border-2 border-ink-100 bg-white">
