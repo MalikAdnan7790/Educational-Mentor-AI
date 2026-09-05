@@ -170,8 +170,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-extrabold text-ink-900">My Learning</h1>
-        <p className="text-sm text-ink-500 mt-1">Track your progress and find what to work on next.</p>
+        <h1 className="text-2xl font-extrabold text-ink-900">Dashboard</h1>
+        <p className="text-sm text-ink-500 mt-1">Your learning overview at a glance.</p>
       </div>
 
       {/* Next Best Action */}

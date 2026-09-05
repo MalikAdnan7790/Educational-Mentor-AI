@@ -20,7 +20,7 @@ const LINKS = [
   { href: "/sixty-second", label: "60-Sec" },
   { href: "/missions", label: "Missions" },
   { href: "/coach", label: "Coach" },
-  { href: "/dashboard", label: "My Learning" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/history", label: "History" },
   { href: "/settings", label: "Settings" },
 ];
